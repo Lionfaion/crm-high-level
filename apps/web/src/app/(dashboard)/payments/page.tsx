@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { PaymentsClient } from "./payments-client";
+
 export const metadata: Metadata = { title: "Payments" };
-export default function PaymentsPage() { return <ComingSoon module="Payments" />; }
+
+export default function PaymentsPage() {
+  return <PaymentsClient />;
+}

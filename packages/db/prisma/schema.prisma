@@ -107,6 +107,9 @@ model Account {
   funnels           Funnel[]
   reviews           Review[]
   reviewRequests    ReviewRequest[]
+  products          Product[]
+  invoices          Invoice[]
+  payments          Payment[]
 
   @@map("accounts")
 }
@@ -166,6 +169,8 @@ model Contact {
   formSubmissions   FormSubmission[]
   reviews           Review[]
   reviewRequests    ReviewRequest[]
+  invoices          Invoice[]
+  payments          Payment[]
   campaignRecipients CampaignRecipient[]
 
   @@index([accountId])
@@ -818,4 +823,106 @@ model ReviewRequest {
 
   @@index([accountId])
   @@map("review_requests")
+}
+
+// ─── Payments & Invoicing ─────────────────────────────────────────────────────
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  VOID
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  accountId   String
+  name        String
+  description String?
+  price       Int
+  currency    String   @default("usd")
+  isActive    Boolean  @default(true)
+  stripePriceId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  invoiceItems InvoiceItem[]
+
+  @@index([accountId])
+  @@map("products")
+}
+
+model Invoice {
+  id          String        @id @default(uuid())
+  accountId   String
+  contactId   String?
+  number      String
+  status      InvoiceStatus @default(DRAFT)
+  currency    String        @default("usd")
+  subtotal    Int           @default(0)
+  taxRate     Float         @default(0)
+  taxAmount   Int           @default(0)
+  total       Int           @default(0)
+  notes       String?
+  dueDate     DateTime?
+  sentAt      DateTime?
+  paidAt      DateTime?
+  stripeInvoiceId String?
+  paymentUrl  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  account  Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact  Contact?      @relation(fields: [contactId], references: [id])
+  items    InvoiceItem[]
+  payments Payment[]
+
+  @@index([accountId])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String @id @default(uuid())
+  invoiceId   String
+  productId   String?
+  description String
+  quantity    Int    @default(1)
+  unitPrice   Int
+  total       Int
+
+  invoice Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+model Payment {
+  id        String        @id @default(uuid())
+  accountId String
+  invoiceId String?
+  contactId String?
+  amount    Int
+  currency  String        @default("usd")
+  status    PaymentStatus @default(PENDING)
+  method    String?
+  stripePaymentIntentId String?
+  paidAt    DateTime?
+  createdAt DateTime      @default(now())
+
+  account Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+  contact Contact? @relation(fields: [contactId], references: [id])
+
+  @@index([accountId])
+  @@map("payments")
 }
