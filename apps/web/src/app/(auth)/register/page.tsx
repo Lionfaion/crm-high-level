@@ -14,22 +14,19 @@ export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const form = new FormData(e.currentTarget);
-
     const res = await fetch(`${API_URL}/v1/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.get("name"),
-        email: form.get("email"),
-        password: form.get("password"),
-      }),
+      body: JSON.stringify({ name, email, password }),
     });
 
     setLoading(false);
@@ -60,15 +57,15 @@ export default function RegisterPage() {
             )}
             <div className="space-y-1.5">
               <Label htmlFor="name">Full name</Label>
-              <Input id="name" name="name" type="text" required />
+              <Input id="name" name="name" type="text" required value={name} onChange={(e) => setName((e.target as HTMLInputElement).value)} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" required autoComplete="email" />
+              <Input id="email" name="email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" />
+              <Input id="password" name="password" type="password" required minLength={8} autoComplete="new-password" value={password} onChange={(e) => setPassword((e.target as HTMLInputElement).value)} />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account…" : "Create account"}
