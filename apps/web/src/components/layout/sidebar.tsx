@@ -21,6 +21,7 @@ import {
   ChevronRight,
   Megaphone,
   BarChart3,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -81,6 +82,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
         ],
       },
       { href: "/campaigns", label: "Campaigns", icon: Megaphone },
+      { href: "/workflows", label: "Workflows", icon: Zap },
     ],
   },
   {

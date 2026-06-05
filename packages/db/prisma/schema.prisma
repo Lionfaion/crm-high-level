@@ -99,6 +99,7 @@ model Account {
   campaigns     Campaign[]
   chatbotRules  ChatbotRule[]
   chatWidget    ChatWidget?
+  workflows     Workflow[]
 
   @@map("accounts")
 }
@@ -152,6 +153,7 @@ model Contact {
   notes             Note[]
   activities        Activity[]
   conversations     Conversation[]
+  workflowRuns      WorkflowRun[]
   campaignRecipients CampaignRecipient[]
 
   @@index([accountId])
@@ -445,4 +447,116 @@ model ChatWidget {
   account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@map("chat_widgets")
+}
+
+// ─── Automation Workflows ─────────────────────────────────────────────────────
+
+enum WorkflowStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum TriggerType {
+  CONTACT_CREATED
+  CONTACT_UPDATED
+  TAG_ADDED
+  TAG_REMOVED
+  FORM_SUBMITTED
+  APPOINTMENT_BOOKED
+  OPPORTUNITY_CREATED
+  OPPORTUNITY_WON
+  OPPORTUNITY_LOST
+  INBOUND_MESSAGE
+  MANUAL
+}
+
+enum ActionType {
+  SEND_EMAIL
+  SEND_SMS
+  ADD_TAG
+  REMOVE_TAG
+  WAIT
+  WEBHOOK
+  ASSIGN_USER
+  CREATE_OPPORTUNITY
+  UPDATE_CONTACT
+  INTERNAL_NOTE
+}
+
+enum WorkflowRunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model Workflow {
+  id          String         @id @default(uuid())
+  accountId   String
+  name        String
+  description String?
+  status      WorkflowStatus @default(DRAFT)
+  triggerType TriggerType
+  triggerConfig Json         @default("{}")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  account Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  steps   WorkflowStep[]
+  runs    WorkflowRun[]
+
+  @@index([accountId])
+  @@map("workflows")
+}
+
+model WorkflowStep {
+  id         String     @id @default(uuid())
+  workflowId String
+  position   Int
+  actionType ActionType
+  config     Json       @default("{}")
+  createdAt  DateTime   @default(now())
+
+  workflow Workflow          @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  logs     WorkflowStepLog[]
+
+  @@index([workflowId])
+  @@map("workflow_steps")
+}
+
+model WorkflowRun {
+  id          String            @id @default(uuid())
+  workflowId  String
+  contactId   String?
+  status      WorkflowRunStatus @default(RUNNING)
+  triggeredBy String?
+  startedAt   DateTime          @default(now())
+  finishedAt  DateTime?
+  errorMsg    String?
+
+  workflow Workflow          @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  contact  Contact?          @relation(fields: [contactId], references: [id])
+  stepLogs WorkflowStepLog[]
+
+  @@index([workflowId])
+  @@index([contactId])
+  @@map("workflow_runs")
+}
+
+model WorkflowStepLog {
+  id           String   @id @default(uuid())
+  runId        String
+  stepId       String
+  status       String
+  output       Json?
+  errorMsg     String?
+  executedAt   DateTime @default(now())
+
+  run  WorkflowRun  @relation(fields: [runId], references: [id], onDelete: Cascade)
+  step WorkflowStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@map("workflow_step_logs")
 }

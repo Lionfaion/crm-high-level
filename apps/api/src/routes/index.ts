@@ -12,6 +12,7 @@ import messagingRoutes     from "../modules/messaging/messaging.routes.js";
 import campaignRoutes      from "../modules/messaging/campaign.routes.js";
 import chatbotRoutes       from "../modules/messaging/chatbot.routes.js";
 import widgetRoutes        from "../modules/messaging/widget.routes.js";
+import workflowRoutes      from "../modules/automation/workflow.routes.js";
 
 export async function registerRoutes(app: FastifyInstance) {
   app.register(authRoutes,          { prefix: "/v1/auth" });
@@ -27,4 +28,5 @@ export async function registerRoutes(app: FastifyInstance) {
   app.register(campaignRoutes,      { prefix: "/v1/campaigns" });
   app.register(chatbotRoutes,       { prefix: "/v1/chatbot" });
   app.register(widgetRoutes,        { prefix: "/v1/messaging/widget" });
+  app.register(workflowRoutes,      { prefix: "/v1/workflows" });
 }
