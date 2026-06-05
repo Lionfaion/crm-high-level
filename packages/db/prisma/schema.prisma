@@ -1,0 +1,256 @@
+// Prisma schema for CRM High Level (GoHighLevel clone)
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  SUPER_ADMIN
+  AGENCY_ADMIN
+  AGENCY_USER
+  ACCOUNT_ADMIN
+  ACCOUNT_USER
+}
+
+enum OpportunityStatus {
+  OPEN
+  WON
+  LOST
+  ABANDONED
+}
+
+enum ActivityType {
+  NOTE_ADDED
+  EMAIL_SENT
+  EMAIL_RECEIVED
+  CALL_MADE
+  CALL_RECEIVED
+  MEETING_SCHEDULED
+  MEETING_COMPLETED
+  STAGE_CHANGED
+  OPPORTUNITY_CREATED
+  OPPORTUNITY_WON
+  OPPORTUNITY_LOST
+  CONTACT_CREATED
+  CONTACT_UPDATED
+  TASK_CREATED
+  TASK_COMPLETED
+}
+
+enum ContactStatus {
+  LEAD
+  PROSPECT
+  CUSTOMER
+  CHURNED
+}
+
+// ─── Agency (top-level tenant) ───────────────────────────────────────────────
+
+model Agency {
+  id          String   @id @default(uuid())
+  name        String
+  domain      String?  @unique
+  logoUrl     String?
+  email       String   @unique
+  phone       String?
+  address     String?
+  city        String?
+  state       String?
+  country     String?
+  zipCode     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  accounts Account[]
+  users    User[]
+
+  @@map("agencies")
+}
+
+// ─── Account (sub-account, e.g. a client business) ──────────────────────────
+
+model Account {
+  id          String   @id @default(uuid())
+  agencyId    String
+  name        String
+  email       String
+  phone       String?
+  website     String?
+  logoUrl     String?
+  timezone    String   @default("UTC")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  agency       Agency     @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  users        User[]
+  contacts     Contact[]
+  pipelines    Pipeline[]
+  activities   Activity[]
+
+  @@map("accounts")
+}
+
+// ─── User ────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  agencyId     String?
+  accountId    String?
+  email        String   @unique
+  name         String
+  avatarUrl    String?
+  role         UserRole @default(ACCOUNT_USER)
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  agency       Agency?       @relation(fields: [agencyId], references: [id])
+  account      Account?      @relation(fields: [accountId], references: [id])
+  notes        Note[]
+  activities   Activity[]
+  opportunities Opportunity[] @relation("OpportunityOwner")
+
+  @@map("users")
+}
+
+// ─── Contact ─────────────────────────────────────────────────────────────────
+
+model Contact {
+  id          String        @id @default(uuid())
+  accountId   String
+  email       String?
+  firstName   String
+  lastName    String?
+  phone       String?
+  company     String?
+  website     String?
+  address     String?
+  city        String?
+  state       String?
+  country     String?
+  status      ContactStatus @default(LEAD)
+  tags        String[]
+  customFields Json?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  account       Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  opportunities Opportunity[]
+  notes         Note[]
+  activities    Activity[]
+
+  @@index([accountId])
+  @@index([email])
+  @@map("contacts")
+}
+
+// ─── Pipeline ────────────────────────────────────────────────────────────────
+
+model Pipeline {
+  id        String   @id @default(uuid())
+  accountId String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  stages  Stage[]
+
+  @@index([accountId])
+  @@map("pipelines")
+}
+
+// ─── Stage ───────────────────────────────────────────────────────────────────
+
+model Stage {
+  id          String   @id @default(uuid())
+  pipelineId  String
+  name        String
+  position    Int
+  color       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pipeline      Pipeline      @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  opportunities Opportunity[]
+
+  @@index([pipelineId])
+  @@map("stages")
+}
+
+// ─── Opportunity ─────────────────────────────────────────────────────────────
+
+model Opportunity {
+  id          String            @id @default(uuid())
+  contactId   String
+  stageId     String
+  ownerId     String?
+  name        String
+  value       Decimal?          @db.Decimal(12, 2)
+  status      OpportunityStatus @default(OPEN)
+  closeDate   DateTime?
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  contact    Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  stage      Stage      @relation(fields: [stageId], references: [id])
+  owner      User?      @relation("OpportunityOwner", fields: [ownerId], references: [id])
+  noteItems  Note[]
+  activities Activity[]
+
+  @@index([contactId])
+  @@index([stageId])
+  @@map("opportunities")
+}
+
+// ─── Note ────────────────────────────────────────────────────────────────────
+
+model Note {
+  id            String   @id @default(uuid())
+  contactId     String?
+  opportunityId String?
+  authorId      String
+  body          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  contact     Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  opportunity Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  author      User         @relation(fields: [authorId], references: [id])
+
+  @@index([contactId])
+  @@index([opportunityId])
+  @@map("notes")
+}
+
+// ─── Activity (audit log) ────────────────────────────────────────────────────
+
+model Activity {
+  id            String       @id @default(uuid())
+  accountId     String
+  contactId     String?
+  opportunityId String?
+  userId        String?
+  type          ActivityType
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+
+  account     Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact     Contact?     @relation(fields: [contactId], references: [id])
+  opportunity Opportunity? @relation(fields: [opportunityId], references: [id])
+  user        User?        @relation(fields: [userId], references: [id])
+
+  @@index([accountId])
+  @@index([contactId])
+  @@index([opportunityId])
+  @@map("activities")
+}
