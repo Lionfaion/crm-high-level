@@ -1,0 +1,1018 @@
+// Prisma schema for CRM High Level (GoHighLevel clone)
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  SUPER_ADMIN
+  AGENCY_ADMIN
+  AGENCY_USER
+  ACCOUNT_ADMIN
+  ACCOUNT_USER
+}
+
+enum OpportunityStatus {
+  OPEN
+  WON
+  LOST
+  ABANDONED
+}
+
+enum ActivityType {
+  NOTE_ADDED
+  EMAIL_SENT
+  EMAIL_RECEIVED
+  CALL_MADE
+  CALL_RECEIVED
+  MEETING_SCHEDULED
+  MEETING_COMPLETED
+  STAGE_CHANGED
+  OPPORTUNITY_CREATED
+  OPPORTUNITY_WON
+  OPPORTUNITY_LOST
+  CONTACT_CREATED
+  CONTACT_UPDATED
+  TASK_CREATED
+  TASK_COMPLETED
+}
+
+enum ContactStatus {
+  LEAD
+  PROSPECT
+  CUSTOMER
+  CHURNED
+}
+
+// ─── Agency (top-level tenant) ───────────────────────────────────────────────
+
+model Agency {
+  id        String   @id @default(uuid())
+  name      String
+  domain    String?  @unique
+  logoUrl   String?
+  email     String   @unique
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  country   String?
+  zipCode   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts Account[]
+  users    User[]
+
+  @@map("agencies")
+}
+
+// ─── Account (sub-account, e.g. a client business) ──────────────────────────
+
+model Account {
+  id        String   @id @default(uuid())
+  agencyId  String
+  name      String
+  email     String
+  phone     String?
+  website   String?
+  logoUrl   String?
+  timezone  String   @default("UTC")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  agency           Agency            @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  users            User[]
+  contacts         Contact[]
+  pipelines        Pipeline[]
+  activities       Activity[]
+  settings         AccountSettings?
+  conversations    Conversation[]
+  campaigns        Campaign[]
+  chatbotRules     ChatbotRule[]
+  chatWidget       ChatWidget?
+  workflows        Workflow[]
+  calendarSettings CalendarSettings?
+  appointmentTypes AppointmentType[]
+  appointments     Appointment[]
+  forms            Form[]
+  funnels          Funnel[]
+  reviews          Review[]
+  reviewRequests   ReviewRequest[]
+  products         Product[]
+  invoices         Invoice[]
+  payments         Payment[]
+  courses          Course[]
+
+  @@map("accounts")
+}
+
+// ─── User ────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  agencyId     String?
+  accountId    String?
+  email        String   @unique
+  name         String
+  avatarUrl    String?
+  role         UserRole @default(ACCOUNT_USER)
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  agency        Agency?       @relation(fields: [agencyId], references: [id])
+  account       Account?      @relation(fields: [accountId], references: [id])
+  notes         Note[]
+  activities    Activity[]
+  opportunities Opportunity[] @relation("OpportunityOwner")
+  appointments  Appointment[]
+
+  @@map("users")
+}
+
+// ─── Contact ─────────────────────────────────────────────────────────────────
+
+model Contact {
+  id           String        @id @default(uuid())
+  accountId    String
+  email        String?
+  firstName    String
+  lastName     String?
+  phone        String?
+  company      String?
+  website      String?
+  address      String?
+  city         String?
+  state        String?
+  country      String?
+  status       ContactStatus @default(LEAD)
+  tags         String[]
+  customFields Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  account            Account             @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  opportunities      Opportunity[]
+  notes              Note[]
+  activities         Activity[]
+  conversations      Conversation[]
+  workflowRuns       WorkflowRun[]
+  appointments       Appointment[]
+  formSubmissions    FormSubmission[]
+  reviews            Review[]
+  reviewRequests     ReviewRequest[]
+  invoices           Invoice[]
+  payments           Payment[]
+  enrollments        Enrollment[]
+  campaignRecipients CampaignRecipient[]
+
+  @@index([accountId])
+  @@index([email])
+  @@map("contacts")
+}
+
+// ─── Pipeline ────────────────────────────────────────────────────────────────
+
+model Pipeline {
+  id        String   @id @default(uuid())
+  accountId String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  stages  Stage[]
+
+  @@index([accountId])
+  @@map("pipelines")
+}
+
+// ─── Stage ───────────────────────────────────────────────────────────────────
+
+model Stage {
+  id         String   @id @default(uuid())
+  pipelineId String
+  name       String
+  position   Int
+  color      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  pipeline      Pipeline      @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  opportunities Opportunity[]
+
+  @@index([pipelineId])
+  @@map("stages")
+}
+
+// ─── Opportunity ─────────────────────────────────────────────────────────────
+
+model Opportunity {
+  id        String            @id @default(uuid())
+  contactId String
+  stageId   String
+  ownerId   String?
+  name      String
+  value     Decimal?          @db.Decimal(12, 2)
+  status    OpportunityStatus @default(OPEN)
+  closeDate DateTime?
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  contact    Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  stage      Stage      @relation(fields: [stageId], references: [id])
+  owner      User?      @relation("OpportunityOwner", fields: [ownerId], references: [id])
+  noteItems  Note[]
+  activities Activity[]
+
+  @@index([contactId])
+  @@index([stageId])
+  @@map("opportunities")
+}
+
+// ─── Note ────────────────────────────────────────────────────────────────────
+
+model Note {
+  id            String   @id @default(uuid())
+  contactId     String?
+  opportunityId String?
+  authorId      String
+  body          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  contact     Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  opportunity Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  author      User         @relation(fields: [authorId], references: [id])
+
+  @@index([contactId])
+  @@index([opportunityId])
+  @@map("notes")
+}
+
+// ─── Activity (audit log) ────────────────────────────────────────────────────
+
+model Activity {
+  id            String       @id @default(uuid())
+  accountId     String
+  contactId     String?
+  opportunityId String?
+  userId        String?
+  type          ActivityType
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+
+  account     Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact     Contact?     @relation(fields: [contactId], references: [id])
+  opportunity Opportunity? @relation(fields: [opportunityId], references: [id])
+  user        User?        @relation(fields: [userId], references: [id])
+
+  @@index([accountId])
+  @@index([contactId])
+  @@index([opportunityId])
+  @@map("activities")
+}
+
+// ─── AccountSettings ──────────────────────────────────────────────────────────
+
+model AccountSettings {
+  id                 String   @id @default(uuid())
+  accountId          String   @unique
+  businessName       String?
+  supportEmail       String?
+  supportPhone       String?
+  timezone           String   @default("UTC")
+  currency           String   @default("USD")
+  logoUrl            String?
+  faviconUrl         String?
+  primaryColor       String   @default("#6d28d9")
+  secondaryColor     String   @default("#4f46e5")
+  // Social links
+  facebookUrl        String?
+  instagramUrl       String?
+  linkedinUrl        String?
+  twitterUrl         String?
+  // Notifications
+  emailNotifications Boolean  @default(true)
+  smsNotifications   Boolean  @default(false)
+  // Address
+  address            String?
+  city               String?
+  state              String?
+  country            String?
+  zipCode            String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("account_settings")
+}
+
+// ─── Messaging ────────────────────────────────────────────────────────────────
+
+enum Channel {
+  EMAIL
+  SMS
+  CHAT
+}
+
+enum ConversationStatus {
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+model Conversation {
+  id        String             @id @default(uuid())
+  accountId String
+  contactId String
+  channel   Channel
+  status    ConversationStatus @default(OPEN)
+  subject   String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  account  Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact  Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@index([accountId])
+  @@index([contactId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String           @id @default(uuid())
+  conversationId String
+  direction      MessageDirection
+  body           String
+  html           String?
+  subject        String?
+  fromAddress    String?
+  toAddress      String?
+  externalId     String?
+  sentAt         DateTime         @default(now())
+  readAt         DateTime?
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("messages")
+}
+
+// ─── Campaigns ────────────────────────────────────────────────────────────────
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  PAUSED
+  CANCELLED
+}
+
+enum CampaignType {
+  EMAIL
+  SMS
+}
+
+model Campaign {
+  id          String         @id @default(uuid())
+  accountId   String
+  name        String
+  type        CampaignType
+  status      CampaignStatus @default(DRAFT)
+  subject     String?
+  body        String
+  fromName    String?
+  fromEmail   String?
+  fromPhone   String?
+  tags        String[]
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  account    Account             @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  recipients CampaignRecipient[]
+
+  @@index([accountId])
+  @@map("campaigns")
+}
+
+model CampaignRecipient {
+  id         String    @id @default(uuid())
+  campaignId String
+  contactId  String
+  sentAt     DateTime?
+  openedAt   DateTime?
+  clickedAt  DateTime?
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contact  Contact  @relation(fields: [contactId], references: [id])
+
+  @@unique([campaignId, contactId])
+  @@map("campaign_recipients")
+}
+
+// ─── Chatbot Rules ────────────────────────────────────────────────────────────
+
+model ChatbotRule {
+  id        String   @id @default(uuid())
+  accountId String
+  trigger   String
+  response  String
+  isActive  Boolean  @default(true)
+  priority  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@map("chatbot_rules")
+}
+
+// ─── Chat Widget ──────────────────────────────────────────────────────────────
+
+model ChatWidget {
+  id             String   @id @default(uuid())
+  accountId      String   @unique
+  greeting       String   @default("Hi! How can we help you?")
+  primaryColor   String   @default("#6d28d9")
+  agentName      String   @default("Support")
+  agentAvatarUrl String?
+  isEnabled      Boolean  @default(true)
+  allowedDomains String[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("chat_widgets")
+}
+
+// ─── Automation Workflows ─────────────────────────────────────────────────────
+
+enum WorkflowStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum TriggerType {
+  CONTACT_CREATED
+  CONTACT_UPDATED
+  TAG_ADDED
+  TAG_REMOVED
+  FORM_SUBMITTED
+  APPOINTMENT_BOOKED
+  OPPORTUNITY_CREATED
+  OPPORTUNITY_WON
+  OPPORTUNITY_LOST
+  INBOUND_MESSAGE
+  MANUAL
+}
+
+enum ActionType {
+  SEND_EMAIL
+  SEND_SMS
+  ADD_TAG
+  REMOVE_TAG
+  WAIT
+  WEBHOOK
+  ASSIGN_USER
+  CREATE_OPPORTUNITY
+  UPDATE_CONTACT
+  INTERNAL_NOTE
+}
+
+enum WorkflowRunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model Workflow {
+  id            String         @id @default(uuid())
+  accountId     String
+  name          String
+  description   String?
+  status        WorkflowStatus @default(DRAFT)
+  triggerType   TriggerType
+  triggerConfig Json           @default("{}")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  account Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  steps   WorkflowStep[]
+  runs    WorkflowRun[]
+
+  @@index([accountId, status])
+  @@index([accountId])
+  @@map("workflows")
+}
+
+model WorkflowStep {
+  id         String     @id @default(uuid())
+  workflowId String
+  position   Int
+  actionType ActionType
+  config     Json       @default("{}")
+  createdAt  DateTime   @default(now())
+
+  workflow Workflow          @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  logs     WorkflowStepLog[]
+
+  @@index([workflowId])
+  @@map("workflow_steps")
+}
+
+model WorkflowRun {
+  id          String            @id @default(uuid())
+  workflowId  String
+  contactId   String?
+  status      WorkflowRunStatus @default(RUNNING)
+  triggeredBy String?
+  startedAt   DateTime          @default(now())
+  finishedAt  DateTime?
+  errorMsg    String?
+
+  workflow Workflow          @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  contact  Contact?          @relation(fields: [contactId], references: [id])
+  stepLogs WorkflowStepLog[]
+
+  @@index([workflowId])
+  @@index([contactId])
+  @@map("workflow_runs")
+}
+
+model WorkflowStepLog {
+  id         String   @id @default(uuid())
+  runId      String
+  stepId     String
+  status     String
+  output     Json?
+  errorMsg   String?
+  executedAt DateTime @default(now())
+
+  run  WorkflowRun  @relation(fields: [runId], references: [id], onDelete: Cascade)
+  step WorkflowStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@map("workflow_step_logs")
+}
+
+// ─── Calendar & Appointments ──────────────────────────────────────────────────
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+model CalendarSettings {
+  id                 String   @id @default(uuid())
+  accountId          String   @unique
+  timezone           String   @default("UTC")
+  workingHoursStart  Int      @default(9)
+  workingHoursEnd    Int      @default(17)
+  workingDays        Int[]    @default([1, 2, 3, 4, 5])
+  googleCalendarId   String?
+  googleRefreshToken String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("calendar_settings")
+}
+
+model AppointmentType {
+  id           String   @id @default(uuid())
+  accountId    String
+  name         String
+  description  String?
+  duration     Int      @default(30)
+  color        String   @default("#6d28d9")
+  isActive     Boolean  @default(true)
+  slug         String
+  bufferBefore Int      @default(0)
+  bufferAfter  Int      @default(0)
+  maxPerDay    Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+
+  @@unique([accountId, slug])
+  @@index([accountId])
+  @@map("appointment_types")
+}
+
+model Appointment {
+  id                String            @id @default(uuid())
+  accountId         String
+  appointmentTypeId String
+  contactId         String?
+  userId            String?
+  title             String
+  startAt           DateTime
+  endAt             DateTime
+  status            AppointmentStatus @default(SCHEDULED)
+  notes             String?
+  locationUrl       String?
+  reminderSentAt    DateTime?
+  cancelledAt       DateTime?
+  cancelReason      String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  account         Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  appointmentType AppointmentType @relation(fields: [appointmentTypeId], references: [id])
+  contact         Contact?        @relation(fields: [contactId], references: [id])
+  assignedUser    User?           @relation(fields: [userId], references: [id])
+
+  @@index([accountId])
+  @@index([startAt])
+  @@map("appointments")
+}
+
+// ─── Forms & Funnels ──────────────────────────────────────────────────────────
+
+enum FormFieldType {
+  TEXT
+  EMAIL
+  PHONE
+  SELECT
+  CHECKBOX
+  DATE
+  TEXTAREA
+  NUMBER
+  RADIO
+}
+
+model Form {
+  id          String   @id @default(uuid())
+  accountId   String
+  name        String
+  description String?
+  isActive    Boolean  @default(true)
+  redirectUrl String?
+  submitText  String   @default("Submit")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  account     Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  fields      FormField[]
+  submissions FormSubmission[]
+
+  @@index([accountId])
+  @@map("forms")
+}
+
+model FormField {
+  id          String        @id @default(uuid())
+  formId      String
+  label       String
+  fieldType   FormFieldType
+  placeholder String?
+  required    Boolean       @default(false)
+  options     String[]
+  position    Int           @default(0)
+  mappedField String?
+  createdAt   DateTime      @default(now())
+
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@index([formId])
+  @@map("form_fields")
+}
+
+model FormSubmission {
+  id        String   @id @default(uuid())
+  formId    String
+  contactId String?
+  data      Json
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  form    Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  contact Contact? @relation(fields: [contactId], references: [id])
+
+  @@index([formId])
+  @@index([contactId])
+  @@map("form_submissions")
+}
+
+// ─── Funnels ──────────────────────────────────────────────────────────────────
+
+model Funnel {
+  id          String   @id @default(uuid())
+  accountId   String
+  name        String
+  description String?
+  isActive    Boolean  @default(true)
+  domain      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  account Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  pages   FunnelPage[]
+
+  @@index([accountId])
+  @@map("funnels")
+}
+
+model FunnelPage {
+  id          String   @id @default(uuid())
+  funnelId    String
+  name        String
+  slug        String
+  position    Int      @default(0)
+  content     Json     @default("{}")
+  isEnabled   Boolean  @default(true)
+  views       Int      @default(0)
+  conversions Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  funnel Funnel @relation(fields: [funnelId], references: [id], onDelete: Cascade)
+
+  @@unique([funnelId, slug])
+  @@index([funnelId])
+  @@map("funnel_pages")
+}
+
+// ─── Reputation ───────────────────────────────────────────────────────────────
+
+enum ReviewSource {
+  GOOGLE
+  FACEBOOK
+  YELP
+  INTERNAL
+  OTHER
+}
+
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  HIDDEN
+  RESPONDED
+}
+
+model Review {
+  id           String       @id @default(uuid())
+  accountId    String
+  contactId    String?
+  source       ReviewSource @default(INTERNAL)
+  rating       Int
+  title        String?
+  body         String?
+  reviewerName String?
+  reviewUrl    String?
+  status       ReviewStatus @default(PUBLISHED)
+  response     String?
+  respondedAt  DateTime?
+  reviewedAt   DateTime     @default(now())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  account Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact Contact? @relation(fields: [contactId], references: [id])
+
+  @@index([accountId])
+  @@index([source])
+  @@map("reviews")
+}
+
+model ReviewRequest {
+  id         String    @id @default(uuid())
+  accountId  String
+  contactId  String
+  channel    String    @default("EMAIL")
+  sentAt     DateTime  @default(now())
+  openedAt   DateTime?
+  clickedAt  DateTime?
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact Contact @relation(fields: [contactId], references: [id])
+
+  @@index([accountId])
+  @@map("review_requests")
+}
+
+// ─── Payments & Invoicing ─────────────────────────────────────────────────────
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  VOID
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  accountId     String
+  name          String
+  description   String?
+  price         Int
+  currency      String   @default("usd")
+  isActive      Boolean  @default(true)
+  stripePriceId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  invoiceItems InvoiceItem[]
+
+  @@index([accountId])
+  @@map("products")
+}
+
+model Invoice {
+  id              String        @id @default(uuid())
+  accountId       String
+  contactId       String?
+  number          String
+  status          InvoiceStatus @default(DRAFT)
+  currency        String        @default("usd")
+  subtotal        Int           @default(0)
+  taxRate         Float         @default(0)
+  taxAmount       Int           @default(0)
+  total           Int           @default(0)
+  notes           String?
+  dueDate         DateTime?
+  sentAt          DateTime?
+  paidAt          DateTime?
+  stripeInvoiceId String?
+  paymentUrl      String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  account  Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact  Contact?      @relation(fields: [contactId], references: [id])
+  items    InvoiceItem[]
+  payments Payment[]
+
+  @@index([accountId])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String  @id @default(uuid())
+  invoiceId   String
+  productId   String?
+  description String
+  quantity    Int     @default(1)
+  unitPrice   Int
+  total       Int
+
+  invoice Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+model Payment {
+  id                    String        @id @default(uuid())
+  accountId             String
+  invoiceId             String?
+  contactId             String?
+  amount                Int
+  currency              String        @default("usd")
+  status                PaymentStatus @default(PENDING)
+  method                String?
+  stripePaymentIntentId String?
+  paidAt                DateTime?
+  createdAt             DateTime      @default(now())
+
+  account Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+  contact Contact? @relation(fields: [contactId], references: [id])
+
+  @@index([accountId])
+  @@map("payments")
+}
+
+// ─── Memberships & Courses ────────────────────────────────────────────────────
+
+model Course {
+  id          String   @id @default(uuid())
+  accountId   String
+  title       String
+  description String?
+  slug        String
+  imageUrl    String?
+  isPublished Boolean  @default(false)
+  price       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  account     Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  sections    CourseSection[]
+  enrollments Enrollment[]
+
+  @@unique([accountId, slug])
+  @@index([accountId])
+  @@map("courses")
+}
+
+model CourseSection {
+  id        String   @id @default(uuid())
+  courseId  String
+  title     String
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  course  Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons CourseLesson[]
+
+  @@index([courseId])
+  @@map("course_sections")
+}
+
+model CourseLesson {
+  id        String   @id @default(uuid())
+  sectionId String
+  title     String
+  content   String?
+  videoUrl  String?
+  fileUrl   String?
+  duration  Int?
+  position  Int      @default(0)
+  isPreview Boolean  @default(false)
+  dripDays  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  section  CourseSection    @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
+
+  @@index([sectionId])
+  @@map("course_lessons")
+}
+
+model Enrollment {
+  id          String    @id @default(uuid())
+  courseId    String
+  contactId   String
+  enrolledAt  DateTime  @default(now())
+  completedAt DateTime?
+  expiresAt   DateTime?
+
+  course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  contact  Contact          @relation(fields: [contactId], references: [id])
+  progress LessonProgress[]
+
+  @@unique([courseId, contactId])
+  @@index([courseId])
+  @@index([contactId])
+  @@map("enrollments")
+}
+
+model LessonProgress {
+  id           String   @id @default(uuid())
+  enrollmentId String
+  lessonId     String
+  completedAt  DateTime @default(now())
+
+  enrollment Enrollment   @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson     CourseLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([enrollmentId, lessonId])
+  @@map("lesson_progress")
+}
