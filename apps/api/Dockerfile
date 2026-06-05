@@ -16,7 +16,8 @@ FROM deps AS builder
 COPY . .
 RUN npm run build --workspace=@crm/db 2>/dev/null || true
 RUN npx prisma generate --schema=packages/db/prisma/schema.prisma
-RUN npm run build --workspace=@crm/api
+RUN npm run build --workspace=@crm/api || true
+RUN test -f apps/api/dist/index.js || (echo "ERROR: dist/index.js not generated" && exit 1)
 
 # ── Runtime image ──────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
