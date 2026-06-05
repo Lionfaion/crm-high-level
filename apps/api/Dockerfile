@@ -23,6 +23,7 @@ RUN test -f apps/api/dist/index.js || (echo "ERROR: dist/index.js not generated"
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV PRISMA_QUERY_ENGINE_LIBRARY=/app/packages/db/dist/generated/prisma/libquery_engine-linux-musl-openssl-3.0.x.so.node
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
