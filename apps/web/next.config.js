@@ -1,21 +1,20 @@
 /** @type {import('next').NextConfig} */
+
+// Ensure env vars have valid values during build/prerender phase.
+// ?? only catches null/undefined; || also catches empty strings set by Vercel.
+process.env.NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
+process.env.NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || "build-time-placeholder-secret";
+
 const nextConfig = {
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001",
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "http://localhost:3000",
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ?? "build-time-placeholder-secret",
-  },
-  // Allow builds to succeed even with missing env vars during CI
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Rewrites so the web app can proxy /api/* to the backend
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
     return [
       {
         source: "/api/proxy/:path*",
-        destination: `${apiUrl}/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
       },
     ];
   },
