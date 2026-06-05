@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { CalendarClient } from "./calendar-client";
+
 export const metadata: Metadata = { title: "Calendar" };
-export default function CalendarPage() { return <ComingSoon module="Calendar" />; }
+
+export default function CalendarPage() {
+  return <CalendarClient />;
+}

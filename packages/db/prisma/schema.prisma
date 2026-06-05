@@ -97,9 +97,12 @@ model Account {
   settings      AccountSettings?
   conversations Conversation[]
   campaigns     Campaign[]
-  chatbotRules  ChatbotRule[]
-  chatWidget    ChatWidget?
-  workflows     Workflow[]
+  chatbotRules      ChatbotRule[]
+  chatWidget        ChatWidget?
+  workflows         Workflow[]
+  calendarSettings  CalendarSettings?
+  appointmentTypes  AppointmentType[]
+  appointments      Appointment[]
 
   @@map("accounts")
 }
@@ -123,6 +126,7 @@ model User {
   notes        Note[]
   activities   Activity[]
   opportunities Opportunity[] @relation("OpportunityOwner")
+  appointments Appointment[]
 
   @@map("users")
 }
@@ -154,6 +158,7 @@ model Contact {
   activities        Activity[]
   conversations     Conversation[]
   workflowRuns      WorkflowRun[]
+  appointments      Appointment[]
   campaignRecipients CampaignRecipient[]
 
   @@index([accountId])
@@ -507,6 +512,8 @@ model Workflow {
   steps   WorkflowStep[]
   runs    WorkflowRun[]
 
+  @@index([accountId, status])
+
   @@index([accountId])
   @@map("workflows")
 }
@@ -559,4 +566,82 @@ model WorkflowStepLog {
 
   @@index([runId])
   @@map("workflow_step_logs")
+}
+
+// ─── Calendar & Appointments ──────────────────────────────────────────────────
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
+model CalendarSettings {
+  id               String   @id @default(uuid())
+  accountId        String   @unique
+  timezone         String   @default("UTC")
+  workingHoursStart Int     @default(9)
+  workingHoursEnd  Int      @default(17)
+  workingDays      Int[]    @default([1, 2, 3, 4, 5])
+  googleCalendarId String?
+  googleRefreshToken String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("calendar_settings")
+}
+
+model AppointmentType {
+  id           String   @id @default(uuid())
+  accountId    String
+  name         String
+  description  String?
+  duration     Int      @default(30)
+  color        String   @default("#6d28d9")
+  isActive     Boolean  @default(true)
+  slug         String
+  bufferBefore Int      @default(0)
+  bufferAfter  Int      @default(0)
+  maxPerDay    Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+
+  @@unique([accountId, slug])
+  @@index([accountId])
+  @@map("appointment_types")
+}
+
+model Appointment {
+  id                String            @id @default(uuid())
+  accountId         String
+  appointmentTypeId String
+  contactId         String?
+  userId            String?
+  title             String
+  startAt           DateTime
+  endAt             DateTime
+  status            AppointmentStatus @default(SCHEDULED)
+  notes             String?
+  locationUrl       String?
+  reminderSentAt    DateTime?
+  cancelledAt       DateTime?
+  cancelReason      String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  account         Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  appointmentType AppointmentType @relation(fields: [appointmentTypeId], references: [id])
+  contact         Contact?        @relation(fields: [contactId], references: [id])
+  assignedUser    User?           @relation(fields: [userId], references: [id])
+
+  @@index([accountId])
+  @@index([startAt])
+  @@map("appointments")
 }
