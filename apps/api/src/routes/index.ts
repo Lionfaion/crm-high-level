@@ -19,6 +19,7 @@ import funnelRoutes        from "../modules/funnels/funnel.routes.js";
 import reputationRoutes    from "../modules/reputation/reputation.routes.js";
 import paymentRoutes       from "../modules/payments/payment.routes.js";
 import membershipRoutes    from "../modules/memberships/membership.routes.js";
+import reportingRoutes     from "../modules/reporting/reporting.routes.js";
 
 export async function registerRoutes(app: FastifyInstance) {
   app.register(authRoutes,          { prefix: "/v1/auth" });
@@ -41,4 +42,5 @@ export async function registerRoutes(app: FastifyInstance) {
   app.register(reputationRoutes,    { prefix: "/v1/reputation" });
   app.register(paymentRoutes,       { prefix: "/v1/payments" });
   app.register(membershipRoutes,    { prefix: "/v1/memberships" });
+  app.register(reportingRoutes,     { prefix: "/v1/reporting" });
 }
