@@ -14,6 +14,8 @@ FROM deps AS builder
 COPY . .
 RUN npx prisma generate --schema=packages/db/prisma/schema.prisma
 RUN npm run build --workspace=@crm/db
+# Copy generated Prisma client into dist so dist/client.js can resolve ./generated/prisma
+RUN cp -r packages/db/src/generated packages/db/dist/generated
 RUN npm run build --workspace=@crm/api || true
 RUN test -f apps/api/dist/index.js || (echo "ERROR: dist/index.js not generated" && exit 1)
 
