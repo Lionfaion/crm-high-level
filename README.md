@@ -5,14 +5,14 @@ A full-featured CRM and marketing automation platform replicating GoHighLevel's 
 ## Modules
 
 - **CRM** — Contacts, Pipelines, Opportunities (Kanban)
-- **Messaging** — Email, SMS, Unified Inbox, Campaigns
-- **Automation** — Visual Workflow Builder, Triggers, Webhooks
-- **Calendar** — Booking Pages, Appointments, Google Sync
-- **Funnels** — Drag-and-drop Page Builder, A/B Testing
-- **Reputation** — Google/Facebook Reviews, Review Requests
-- **Memberships** — Courses, Drip Content, Student Portal
-- **Payments** — Stripe, Invoicing, Subscriptions
-- **White-label** — Sub-accounts, Agency Dashboard, Custom Domains
+- **Messaging** — Email, SMS, Unified Inbox, Campaigns, Chatbot
+- **Automation** — Visual Workflow Builder, Triggers, 10 Action Types
+- **Calendar** — Booking Pages, Appointments, Availability Slots
+- **Forms & Funnels** — Form Builder, Submission Tracking, Funnel Pages
+- **Reputation** — Google/Facebook Reviews, Review Requests, Responses
+- **Payments** — Invoicing, Products, Revenue Tracking
+- **Memberships** — Courses, Drip Content, Enrollments
+- **Reporting** — Dashboard KPIs, Growth Charts, CSV Export
 
 ## Stack
 
@@ -21,15 +21,48 @@ A full-featured CRM and marketing automation platform replicating GoHighLevel's 
 | Frontend | Next.js 14, TypeScript, TailwindCSS, shadcn/ui |
 | Backend | Node.js, Fastify, TypeScript |
 | Database | PostgreSQL + Prisma ORM |
-| Cache/Queue | Redis + BullMQ |
 | Auth | NextAuth.js + JWT |
 | Email | SendGrid |
 | SMS | Twilio |
-| Payments | Stripe |
-| Storage | AWS S3 |
 | Real-time | Socket.io |
 
-## Getting Started
+## Deploy
+
+### Frontend → Vercel
+
+1. Importa el repo en [vercel.com/new](https://vercel.com/new)
+2. Vercel detecta automáticamente `apps/web` como root directory (configurado en `vercel.json`)
+3. Agrega estas variables de entorno en el dashboard de Vercel:
+
+```
+NEXT_PUBLIC_API_URL=https://your-api.railway.app
+NEXTAUTH_SECRET=<random-32-char-string>
+NEXTAUTH_URL=https://your-app.vercel.app
+```
+
+### API → Railway
+
+1. Crea un nuevo proyecto en [railway.app](https://railway.app)
+2. Conecta este repo — Railway usa `railway.json` + `apps/api/Dockerfile`
+3. Agrega los servicios **PostgreSQL** y **Redis** desde el catálogo de Railway
+4. Configura las variables de entorno:
+
+```
+DATABASE_URL=<railway-postgres-url>
+REDIS_URL=<railway-redis-url>
+JWT_SECRET=<random-32-char-string>
+SENDGRID_API_KEY=<tu-key>
+TWILIO_ACCOUNT_SID=<tu-sid>
+TWILIO_AUTH_TOKEN=<tu-token>
+ALLOWED_ORIGINS=https://your-app.vercel.app
+```
+
+5. Ejecuta las migraciones:
+```bash
+railway run npx prisma migrate deploy --schema=packages/db/prisma/schema.prisma
+```
+
+## Local Development
 
 ```bash
 # 1. Copy environment variables
@@ -48,21 +81,15 @@ cd packages/db && npx prisma migrate dev
 npm run dev
 ```
 
-## Implementation Plan
-
-See [docs/superpowers/plans/2026-06-04-crm-highlevel-master-plan.md](docs/superpowers/plans/2026-06-04-crm-highlevel-master-plan.md) for the full 120-day implementation plan.
-
 ## Progress
 
-- [ ] Phase 1: Foundation (Days 1–10)
-- [ ] Phase 2: CRM Core (Days 11–20)
-- [ ] Phase 3: Messaging Hub (Days 21–30)
-- [ ] Phase 4: Automation Workflows (Days 31–40)
-- [ ] Phase 5: Calendar & Booking (Days 41–50)
-- [ ] Phase 6: Funnels & Landing Pages (Days 51–65)
-- [ ] Phase 7: Reputation Management (Days 66–70)
-- [ ] Phase 8: Memberships & Courses (Days 71–80)
-- [ ] Phase 9: Reporting & Analytics (Days 81–90)
-- [ ] Phase 10: Billing & Payments (Days 91–100)
-- [ ] Phase 11: White-label & Sub-accounts (Days 101–110)
-- [ ] Phase 12: Polish & Production (Days 111–120)
+- [x] Phase 1: Foundation (Days 1–10)
+- [x] Phase 2: CRM Core (Days 11–20)
+- [x] Phase 3: Messaging Hub (Days 21–30)
+- [x] Phase 4: Automation Workflows (Days 31–40)
+- [x] Phase 5: Calendar & Appointments (Days 41–50)
+- [x] Phase 6: Forms & Funnels (Days 51–60)
+- [x] Phase 7: Reputation Management (Days 61–70)
+- [x] Phase 8: Payments & Invoicing (Days 71–80)
+- [x] Phase 9: Memberships & Courses (Days 81–90)
+- [x] Phase 10: Reporting & Analytics (Days 91–100)
