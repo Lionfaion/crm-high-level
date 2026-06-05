@@ -1,12 +1,42 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { LogOut, User } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { LogOut, Bell } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
-export function Header({ title }: { title?: string }) {
+const ROUTE_LABELS: Record<string, string> = {
+  "/dashboard":    "Dashboard",
+  "/contacts":     "Contacts",
+  "/pipelines":    "Pipelines",
+  "/activities":   "Activities",
+  "/notes":        "Notes",
+  "/messaging":    "Conversations",
+  "/campaigns":    "Campaigns",
+  "/funnels":      "Funnels & Websites",
+  "/calendar":     "Calendar",
+  "/reputation":   "Reputation",
+  "/reporting":    "Reporting",
+  "/memberships":  "Memberships",
+  "/payments":     "Payments",
+  "/settings":     "Settings",
+};
+
+function usePageTitle() {
+  const pathname = usePathname();
+  // Match longest prefix
+  const match = Object.keys(ROUTE_LABELS)
+    .filter((k) => pathname === k || pathname.startsWith(k + "/"))
+    .sort((a, b) => b.length - a.length)[0];
+  return match ? ROUTE_LABELS[match] : "CRM High Level";
+}
+
+export function Header() {
   const { data: session } = useSession();
+  const title = usePageTitle();
+
   const initials = session?.user?.name
     ?.split(" ")
     .map((n) => n[0])
@@ -15,22 +45,36 @@ export function Header({ title }: { title?: string }) {
     .slice(0, 2) ?? "?";
 
   return (
-    <header className="flex h-14 items-center justify-between border-b bg-background px-6">
-      {title && <h1 className="text-sm font-semibold text-foreground">{title}</h1>}
-      <div className="ml-auto flex items-center gap-3">
-        <Avatar className="h-7 w-7">
-          <AvatarFallback className="text-xs">{initials}</AvatarFallback>
-        </Avatar>
-        <span className="text-sm text-muted-foreground">{session?.user?.name}</span>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          title="Sign out"
-        >
-          <LogOut className="h-4 w-4" />
+    <header className="flex h-14 shrink-0 items-center justify-between border-b bg-background px-6">
+      <h1 className="text-sm font-semibold">{title}</h1>
+
+      <div className="flex items-center gap-2">
+        {/* Notification bell placeholder */}
+        <Button variant="ghost" size="icon" className="h-8 w-8 relative" title="Notifications">
+          <Bell className="h-4 w-4" />
+          <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
+            0
+          </Badge>
         </Button>
+
+        <div className="flex items-center gap-2 pl-2 border-l">
+          <Avatar className="h-7 w-7">
+            <AvatarFallback className="text-xs bg-primary/20 text-primary">{initials}</AvatarFallback>
+          </Avatar>
+          <div className="hidden sm:block">
+            <p className="text-xs font-medium leading-none">{session?.user?.name}</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">{session?.user?.email}</p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 ml-1"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            title="Sign out"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
     </header>
   );
