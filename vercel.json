@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx turbo run build --filter=@crm/web",
+  "buildCommand": "npm run build --workspace=@crm/db && npm run build --workspace=@crm/web",
   "outputDirectory": "apps/web/.next",
   "installCommand": "npm install",
   "framework": "nextjs"
