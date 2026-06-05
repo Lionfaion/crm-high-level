@@ -41,13 +41,11 @@ export function InboxClient() {
 
   const { data, mutate } = useSWR<{ conversations: Conversation[]; total: number }>(
     "/v1/messaging/conversations",
-    () => api.get("/v1/messaging/conversations"),
     { refreshInterval: 10000 }
   );
 
   const { data: convData, mutate: mutateConv } = useSWR<{ conversation: Conversation }>(
     selected ? `/v1/messaging/conversations/${selected}` : null,
-    () => api.get(`/v1/messaging/conversations/${selected}`),
     { refreshInterval: 5000 }
   );
 

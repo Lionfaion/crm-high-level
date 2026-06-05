@@ -60,13 +60,11 @@ export function PaymentsClient() {
   const [acting, setActing] = useState<string | null>(null);
 
   const { data: summaryData } = useSWR<Summary>(
-    "/v1/payments/summary",
-    () => api.get("/v1/payments/summary")
+    "/v1/payments/summary"
   );
 
   const { data, mutate } = useSWR<{ invoices: Invoice[]; total: number }>(
-    "/v1/payments/invoices?pageSize=50",
-    () => api.get("/v1/payments/invoices?pageSize=50")
+    "/v1/payments/invoices?pageSize=50"
   );
 
   const invoices = data?.invoices ?? [];

@@ -61,8 +61,7 @@ export function CampaignsClient() {
   const [sending, setSending] = useState<string | null>(null);
 
   const { data, mutate } = useSWR<{ campaigns: Campaign[]; total: number }>(
-    "/v1/campaigns?pageSize=50",
-    () => api.get("/v1/campaigns?pageSize=50")
+    "/v1/campaigns?pageSize=50"
   );
 
   const campaigns = data?.campaigns ?? [];

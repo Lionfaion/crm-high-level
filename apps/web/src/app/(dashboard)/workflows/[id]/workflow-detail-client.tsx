@@ -68,8 +68,7 @@ export function WorkflowDetailClient({ id }: { id: string }) {
   const [contactId, setContactId] = useState("");
 
   const { data, mutate } = useSWR<{ workflow: Workflow }>(
-    `/v1/workflows/${id}`,
-    () => api.get(`/v1/workflows/${id}`)
+    `/v1/workflows/${id}`
   );
 
   const workflow = data?.workflow;

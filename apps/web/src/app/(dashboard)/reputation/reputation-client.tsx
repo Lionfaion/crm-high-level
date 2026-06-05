@@ -63,13 +63,11 @@ export function ReputationClient() {
   const [saving, setSaving]       = useState(false);
 
   const { data: statsData } = useSWR<Stats>(
-    "/v1/reputation/stats",
-    () => api.get("/v1/reputation/stats")
+    "/v1/reputation/stats"
   );
 
   const { data: reviewsData, mutate } = useSWR<{ reviews: Review[] }>(
-    "/v1/reputation/reviews?pageSize=50",
-    () => api.get("/v1/reputation/reviews?pageSize=50")
+    "/v1/reputation/reviews?pageSize=50"
   );
 
   const stats   = statsData;

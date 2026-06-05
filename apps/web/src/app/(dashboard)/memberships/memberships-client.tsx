@@ -38,8 +38,7 @@ export function MembershipsClient() {
   const [saving, setSaving] = useState(false);
 
   const { data, mutate } = useSWR<{ courses: Course[] }>(
-    "/v1/memberships/courses",
-    () => api.get("/v1/memberships/courses")
+    "/v1/memberships/courses"
   );
 
   const courses = data?.courses ?? [];

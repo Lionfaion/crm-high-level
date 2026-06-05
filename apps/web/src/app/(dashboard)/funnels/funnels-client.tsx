@@ -31,8 +31,7 @@ export function FunnelsClient() {
   const [saving, setSaving] = useState(false);
 
   const { data, mutate } = useSWR<{ funnels: FunnelItem[] }>(
-    "/v1/funnels",
-    () => api.get("/v1/funnels")
+    "/v1/funnels"
   );
 
   const funnels = data?.funnels ?? [];

@@ -1,7 +1,6 @@
 "use client";
 
 import useSWR from "swr";
-import { api } from "@/lib/api-client";
 import { Users, DollarSign, MessageSquare, Calendar, Star, TrendingUp, BarChart3, Target } from "lucide-react";
 
 interface DashboardStats {
@@ -53,23 +52,19 @@ function MiniBar({ label, value, max }: { label: string; value: number; max: num
 
 export function ReportingClient() {
   const { data: stats } = useSWR<DashboardStats>(
-    "/v1/reporting/dashboard",
-    () => api.get("/v1/reporting/dashboard")
+    "/v1/reporting/dashboard"
   );
 
   const { data: growth } = useSWR<{ data: GrowthPoint[] }>(
-    "/v1/reporting/contacts/growth?days=30",
-    () => api.get("/v1/reporting/contacts/growth?days=30")
+    "/v1/reporting/contacts/growth?days=30"
   );
 
   const { data: funnel } = useSWR<{ data: FunnelStage[] }>(
-    "/v1/reporting/pipeline/funnel",
-    () => api.get("/v1/reporting/pipeline/funnel")
+    "/v1/reporting/pipeline/funnel"
   );
 
   const { data: revenue } = useSWR<{ data: RevenueMonth[] }>(
-    "/v1/reporting/revenue",
-    () => api.get("/v1/reporting/revenue")
+    "/v1/reporting/revenue"
   );
 
   const maxFunnel = Math.max(...(funnel?.data ?? []).map((s) => s.count), 1);

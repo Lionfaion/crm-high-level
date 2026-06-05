@@ -49,8 +49,7 @@ export function WorkflowsClient() {
   const [saving, setSaving] = useState(false);
 
   const { data, mutate } = useSWR<{ workflows: Workflow[]; total: number }>(
-    "/v1/workflows?pageSize=50",
-    () => api.get("/v1/workflows?pageSize=50")
+    "/v1/workflows?pageSize=50"
   );
 
   const workflows = data?.workflows ?? [];

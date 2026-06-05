@@ -60,13 +60,11 @@ export function CalendarClient() {
   const to   = format(endOfMonth(currentMonth), "yyyy-MM-dd");
 
   const { data: apptData, mutate } = useSWR<{ appointments: Appointment[] }>(
-    `/v1/calendar?from=${from}&to=${to}&pageSize=200`,
-    () => api.get(`/v1/calendar?from=${from}&to=${to}&pageSize=200`)
+    `/v1/calendar?from=${from}&to=${to}&pageSize=200`
   );
 
   const { data: typesData } = useSWR<{ types: AppointmentType[] }>(
-    "/v1/calendar/types",
-    () => api.get("/v1/calendar/types")
+    "/v1/calendar/types"
   );
 
   const appointments = apptData?.appointments ?? [];
