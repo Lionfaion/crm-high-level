@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Funnel } from "lucide-react";
+import { Plus, Filter } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -89,7 +89,7 @@ export function FunnelsClient() {
 
       {funnels.length === 0 ? (
         <div className="border rounded-lg p-12 text-center text-muted-foreground">
-          <Funnel className="mx-auto h-10 w-10 mb-3 opacity-30" />
+          <Filter className="mx-auto h-10 w-10 mb-3 opacity-30" />
           <p className="font-medium">No funnels yet</p>
           <p className="text-sm">Build multi-step landing pages and capture leads.</p>
         </div>

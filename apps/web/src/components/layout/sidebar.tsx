@@ -7,7 +7,7 @@ import {
   Users,
   MessageSquare,
   Calendar,
-  Funnel,
+  Filter,
   Star,
   GraduationCap,
   CreditCard,
@@ -88,7 +88,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
   {
     title: "Marketing",
     items: [
-      { href: "/funnels",       label: "Funnels & Websites", icon: Funnel },
+      { href: "/funnels",       label: "Funnels & Websites", icon: Filter },
       { href: "/calendar",      label: "Calendar",           icon: Calendar },
       { href: "/reputation",    label: "Reputation",         icon: Star },
       { href: "/reporting",     label: "Reporting",          icon: BarChart3 },

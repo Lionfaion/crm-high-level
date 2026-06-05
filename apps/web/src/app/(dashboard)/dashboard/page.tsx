@@ -3,7 +3,7 @@ import Link from "next/link";
 import {
   Users, Target, GitBranch, TrendingUp,
   MessageSquare, Calendar, Star, CreditCard,
-  Funnel, GraduationCap, Megaphone, BarChart3,
+  Filter, GraduationCap, Megaphone, BarChart3,
   ArrowRight,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -55,7 +55,7 @@ const modules = [
     href: "/funnels",
     label: "Funnels",
     description: "Build landing pages and funnels",
-    icon: Funnel,
+    icon: Filter,
     color: "text-pink-500",
     bg: "bg-pink-500/10",
   },
