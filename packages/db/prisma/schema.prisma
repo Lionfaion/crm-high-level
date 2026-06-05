@@ -89,11 +89,12 @@ model Account {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  agency       Agency     @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agency       Agency          @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   users        User[]
   contacts     Contact[]
   pipelines    Pipeline[]
   activities   Activity[]
+  settings     AccountSettings?
 
   @@map("accounts")
 }
@@ -253,4 +254,40 @@ model Activity {
   @@index([contactId])
   @@index([opportunityId])
   @@map("activities")
+}
+
+// ─── AccountSettings ──────────────────────────────────────────────────────────
+
+model AccountSettings {
+  id                String   @id @default(uuid())
+  accountId         String   @unique
+  businessName      String?
+  supportEmail      String?
+  supportPhone      String?
+  timezone          String   @default("UTC")
+  currency          String   @default("USD")
+  logoUrl           String?
+  faviconUrl        String?
+  primaryColor      String   @default("#6d28d9")
+  secondaryColor    String   @default("#4f46e5")
+  // Social links
+  facebookUrl       String?
+  instagramUrl      String?
+  linkedinUrl       String?
+  twitterUrl        String?
+  // Notifications
+  emailNotifications   Boolean @default(true)
+  smsNotifications     Boolean @default(false)
+  // Address
+  address           String?
+  city              String?
+  state             String?
+  country           String?
+  zipCode           String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("account_settings")
 }
