@@ -26,41 +26,66 @@ A full-featured CRM and marketing automation platform replicating GoHighLevel's 
 | SMS | Twilio |
 | Real-time | Socket.io |
 
-## Deploy
+---
 
-### Frontend → Vercel
+## Deploy en producción (100% gratuito)
 
-1. Importa el repo en [vercel.com/new](https://vercel.com/new)
-2. Vercel detecta automáticamente `apps/web` como root directory (configurado en `vercel.json`)
-3. Agrega estas variables de entorno en el dashboard de Vercel:
+| Servicio | Plataforma | Plan |
+|----------|------------|------|
+| Frontend (Next.js) | **Vercel** | Free |
+| API (Fastify) | **Render.com** | Free |
+| PostgreSQL | **Neon.tech** | Free forever |
+| Redis | **Upstash** | Free forever |
 
-```
-NEXT_PUBLIC_API_URL=https://your-api.railway.app
-NEXTAUTH_SECRET=<random-32-char-string>
-NEXTAUTH_URL=https://your-app.vercel.app
-```
+---
 
-### API → Railway
+### Paso 1 — Base de datos: Neon.tech
 
-1. Crea un nuevo proyecto en [railway.app](https://railway.app)
-2. Conecta este repo — Railway usa `railway.json` + `apps/api/Dockerfile`
-3. Agrega los servicios **PostgreSQL** y **Redis** desde el catálogo de Railway
-4. Configura las variables de entorno:
+1. Crea cuenta en [neon.tech](https://neon.tech)
+2. Crea un nuevo proyecto → copia la **Connection String** (formato `postgresql://...`)
+3. Guárdala como `DATABASE_URL`
 
-```
-DATABASE_URL=<railway-postgres-url>
-REDIS_URL=<railway-redis-url>
-JWT_SECRET=<random-32-char-string>
-SENDGRID_API_KEY=<tu-key>
-TWILIO_ACCOUNT_SID=<tu-sid>
-TWILIO_AUTH_TOKEN=<tu-token>
-ALLOWED_ORIGINS=https://your-app.vercel.app
-```
+### Paso 2 — Redis: Upstash
 
-5. Ejecuta las migraciones:
-```bash
-railway run npx prisma migrate deploy --schema=packages/db/prisma/schema.prisma
-```
+1. Crea cuenta en [upstash.com](https://upstash.com)
+2. Crea una base de datos Redis → copia la **Redis URL** (formato `rediss://...`)
+3. Guárdala como `REDIS_URL`
+
+### Paso 3 — API: Render.com
+
+1. Crea cuenta en [render.com](https://render.com)
+2. New → **Web Service** → Connect GitHub → selecciona este repo
+3. Configuración:
+   - **Root Directory**: `.` (raíz del repo)
+   - **Dockerfile Path**: `apps/api/Dockerfile`
+   - **Environment**: Docker
+4. En **Environment Variables** agrega:
+   ```
+   DATABASE_URL=<tu-url-de-neon>
+   REDIS_URL=<tu-url-de-upstash>
+   JWT_SECRET=<string-aleatorio-32-chars>
+   ALLOWED_ORIGINS=https://tu-app.vercel.app
+   NODE_ENV=production
+   ```
+5. Haz click en **Deploy** → copia la URL pública (ej: `https://crm-api.onrender.com`)
+6. Ejecuta las migraciones desde el shell de Render:
+   ```bash
+   npx prisma migrate deploy --schema=packages/db/prisma/schema.prisma
+   ```
+
+### Paso 4 — Frontend: Vercel
+
+1. Ve a [vercel.com/new](https://vercel.com/new) → importa este repo
+2. Vercel detecta `vercel.json` automáticamente (root dir: `apps/web`)
+3. En **Environment Variables** agrega:
+   ```
+   NEXT_PUBLIC_API_URL=https://crm-api.onrender.com
+   NEXTAUTH_SECRET=<string-aleatorio-32-chars>
+   NEXTAUTH_URL=https://tu-app.vercel.app
+   ```
+4. Deploy → ¡listo!
+
+---
 
 ## Local Development
 

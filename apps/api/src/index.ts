@@ -60,7 +60,8 @@ app.register(registerRoutes);
 
 // ── Start & graceful shutdown ─────────────────────────────────────────────────
 
-const port = Number(process.env.API_PORT ?? 3001);
+// Render uses PORT env var; fallback to API_PORT for local dev
+const port = Number(process.env.PORT ?? process.env.API_PORT ?? 3001);
 
 async function start() {
   try {
