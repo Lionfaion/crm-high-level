@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { ContactsClient } from "./contacts-client";
+
 export const metadata: Metadata = { title: "Contacts" };
-export default function ContactsPage() { return <ComingSoon module="Contacts" />; }
+
+export default function ContactsPage() {
+  return <ContactsClient />;
+}

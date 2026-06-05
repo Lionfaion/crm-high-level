@@ -2,7 +2,8 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { LogOut, Bell } from "lucide-react";
+import { LogOut, Bell, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -48,7 +49,13 @@ export function Header() {
     <header className="flex h-14 shrink-0 items-center justify-between border-b bg-background px-6">
       <h1 className="text-sm font-semibold">{title}</h1>
 
-      <div className="flex items-center gap-2">
+      {/* Global search */}
+      <div className="hidden md:flex items-center relative mx-4 flex-1 max-w-xs">
+        <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
+        <Input placeholder="Search…" className="pl-8 h-8 text-sm" />
+      </div>
+
+      <div className="flex items-center gap-2 ml-auto">
         {/* Notification bell placeholder */}
         <Button variant="ghost" size="icon" className="h-8 w-8 relative" title="Notifications">
           <Bell className="h-4 w-4" />

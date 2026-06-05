@@ -25,6 +25,7 @@ import {
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { AccountSwitcher } from "./account-switcher";
 
 type NavItem = {
   href: string;
@@ -176,6 +177,13 @@ export function Sidebar() {
       <div className="flex h-14 items-center gap-2.5 px-4">
         <Building2 className="h-5 w-5 text-primary" />
         <span className="font-semibold text-sm">CRM High Level</span>
+      </div>
+
+      <Separator className="bg-sidebar-border" />
+
+      {/* Account switcher */}
+      <div className="px-2 py-2">
+        <AccountSwitcher />
       </div>
 
       <Separator className="bg-sidebar-border" />

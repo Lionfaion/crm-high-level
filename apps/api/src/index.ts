@@ -6,6 +6,7 @@ import jwtPlugin from "./plugins/jwt.js";
 import rbacPlugin from "./plugins/rbac.js";
 import requestContextPlugin from "./plugins/request-context.js";
 import errorHandlerPlugin from "./plugins/error-handler.js";
+import accountContextPlugin from "./plugins/account-context.js";
 import { registerRoutes } from "./routes/index.js";
 import systemRoutes from "./routes/system.js";
 
@@ -49,6 +50,7 @@ app.register(errorHandlerPlugin);
 
 app.register(jwtPlugin);
 app.register(rbacPlugin);
+app.register(accountContextPlugin);
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 

@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { PipelinesClient } from "./pipelines-client";
+
 export const metadata: Metadata = { title: "Pipelines" };
-export default function PipelinesPage() { return <ComingSoon module="Pipelines" />; }
+
+export default function PipelinesPage() {
+  return <PipelinesClient />;
+}
