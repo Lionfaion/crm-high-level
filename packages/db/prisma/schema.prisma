@@ -105,6 +105,8 @@ model Account {
   appointments      Appointment[]
   forms             Form[]
   funnels           Funnel[]
+  reviews           Review[]
+  reviewRequests    ReviewRequest[]
 
   @@map("accounts")
 }
@@ -162,6 +164,8 @@ model Contact {
   workflowRuns      WorkflowRun[]
   appointments      Appointment[]
   formSubmissions   FormSubmission[]
+  reviews           Review[]
+  reviewRequests    ReviewRequest[]
   campaignRecipients CampaignRecipient[]
 
   @@index([accountId])
@@ -754,4 +758,64 @@ model FunnelPage {
   @@unique([funnelId, slug])
   @@index([funnelId])
   @@map("funnel_pages")
+}
+
+// ─── Reputation ───────────────────────────────────────────────────────────────
+
+enum ReviewSource {
+  GOOGLE
+  FACEBOOK
+  YELP
+  INTERNAL
+  OTHER
+}
+
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  HIDDEN
+  RESPONDED
+}
+
+model Review {
+  id           String       @id @default(uuid())
+  accountId    String
+  contactId    String?
+  source       ReviewSource @default(INTERNAL)
+  rating       Int
+  title        String?
+  body         String?
+  reviewerName String?
+  reviewUrl    String?
+  status       ReviewStatus @default(PUBLISHED)
+  response     String?
+  respondedAt  DateTime?
+  reviewedAt   DateTime     @default(now())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  account Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact Contact? @relation(fields: [contactId], references: [id])
+
+  @@index([accountId])
+  @@index([source])
+  @@map("reviews")
+}
+
+model ReviewRequest {
+  id          String   @id @default(uuid())
+  accountId   String
+  contactId   String
+  channel     String   @default("EMAIL")
+  sentAt      DateTime @default(now())
+  openedAt    DateTime?
+  clickedAt   DateTime?
+  reviewedAt  DateTime?
+  createdAt   DateTime @default(now())
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact Contact @relation(fields: [contactId], references: [id])
+
+  @@index([accountId])
+  @@map("review_requests")
 }

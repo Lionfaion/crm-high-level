@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { ReputationClient } from "./reputation-client";
+
 export const metadata: Metadata = { title: "Reputation" };
-export default function ReputationPage() { return <ComingSoon module="Reputation" />; }
+
+export default function ReputationPage() {
+  return <ReputationClient />;
+}

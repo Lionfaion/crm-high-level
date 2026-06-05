@@ -16,6 +16,7 @@ import workflowRoutes      from "../modules/automation/workflow.routes.js";
 import calendarRoutes      from "../modules/calendar/calendar.routes.js";
 import formRoutes          from "../modules/forms/form.routes.js";
 import funnelRoutes        from "../modules/funnels/funnel.routes.js";
+import reputationRoutes    from "../modules/reputation/reputation.routes.js";
 
 export async function registerRoutes(app: FastifyInstance) {
   app.register(authRoutes,          { prefix: "/v1/auth" });
@@ -35,4 +36,5 @@ export async function registerRoutes(app: FastifyInstance) {
   app.register(calendarRoutes,      { prefix: "/v1/calendar" });
   app.register(formRoutes,          { prefix: "/v1/forms" });
   app.register(funnelRoutes,        { prefix: "/v1/funnels" });
+  app.register(reputationRoutes,    { prefix: "/v1/reputation" });
 }
