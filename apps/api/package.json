@@ -11,7 +11,10 @@
   "dependencies": {
     "@crm/db": "*",
     "@fastify/cors": "^9.0.0",
+    "@fastify/helmet": "^11.1.1",
     "@fastify/jwt": "^8.0.0",
+    "@fastify/rate-limit": "^9.1.0",
+    "@fastify/request-context": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "fastify": "^4.27.0",
     "fastify-plugin": "^4.5.1",
@@ -20,6 +23,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
+    "pino-pretty": "^11.2.1",
     "tsx": "^4.11.0",
     "typescript": "^5.4.0"
   }

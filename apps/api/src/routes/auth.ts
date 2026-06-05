@@ -2,10 +2,11 @@ import type { FastifyInstance } from "fastify";
 import bcrypt from "bcryptjs";
 import { prisma } from "@crm/db";
 import { registerSchema, loginSchema } from "../schemas/auth.js";
+import { authRateLimit } from "../plugins/rate-limit.js";
 
 export default async function authRoutes(app: FastifyInstance) {
   // POST /auth/register
-  app.post("/register", async (request, reply) => {
+  app.post("/register", { ...authRateLimit }, async (request, reply) => {
     const result = registerSchema.safeParse(request.body);
     if (!result.success) {
       return reply.code(400).send({ error: "Validation failed", details: result.error.flatten() });
@@ -31,7 +32,7 @@ export default async function authRoutes(app: FastifyInstance) {
   });
 
   // POST /auth/login
-  app.post("/login", async (request, reply) => {
+  app.post("/login", { ...authRateLimit }, async (request, reply) => {
     const result = loginSchema.safeParse(request.body);
     if (!result.success) {
       return reply.code(400).send({ error: "Validation failed", details: result.error.flatten() });
