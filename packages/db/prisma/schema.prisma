@@ -89,12 +89,16 @@ model Account {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  agency       Agency          @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  users        User[]
-  contacts     Contact[]
-  pipelines    Pipeline[]
-  activities   Activity[]
-  settings     AccountSettings?
+  agency        Agency           @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  users         User[]
+  contacts      Contact[]
+  pipelines     Pipeline[]
+  activities    Activity[]
+  settings      AccountSettings?
+  conversations Conversation[]
+  campaigns     Campaign[]
+  chatbotRules  ChatbotRule[]
+  chatWidget    ChatWidget?
 
   @@map("accounts")
 }
@@ -143,10 +147,12 @@ model Contact {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  account       Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  opportunities Opportunity[]
-  notes         Note[]
-  activities    Activity[]
+  account           Account            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  opportunities     Opportunity[]
+  notes             Note[]
+  activities        Activity[]
+  conversations     Conversation[]
+  campaignRecipients CampaignRecipient[]
 
   @@index([accountId])
   @@index([email])
@@ -290,4 +296,153 @@ model AccountSettings {
   account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@map("account_settings")
+}
+
+// ─── Messaging ────────────────────────────────────────────────────────────────
+
+enum Channel {
+  EMAIL
+  SMS
+  CHAT
+}
+
+enum ConversationStatus {
+  OPEN
+  CLOSED
+  ARCHIVED
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+model Conversation {
+  id        String             @id @default(uuid())
+  accountId String
+  contactId String
+  channel   Channel
+  status    ConversationStatus @default(OPEN)
+  subject   String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  account  Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  contact  Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@index([accountId])
+  @@index([contactId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String           @id @default(uuid())
+  conversationId String
+  direction      MessageDirection
+  body           String
+  html           String?
+  subject        String?
+  fromAddress    String?
+  toAddress      String?
+  externalId     String?
+  sentAt         DateTime         @default(now())
+  readAt         DateTime?
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("messages")
+}
+
+// ─── Campaigns ────────────────────────────────────────────────────────────────
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  PAUSED
+  CANCELLED
+}
+
+enum CampaignType {
+  EMAIL
+  SMS
+}
+
+model Campaign {
+  id          String         @id @default(uuid())
+  accountId   String
+  name        String
+  type        CampaignType
+  status      CampaignStatus @default(DRAFT)
+  subject     String?
+  body        String
+  fromName    String?
+  fromEmail   String?
+  fromPhone   String?
+  tags        String[]
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  account   Account            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  recipients CampaignRecipient[]
+
+  @@index([accountId])
+  @@map("campaigns")
+}
+
+model CampaignRecipient {
+  id         String   @id @default(uuid())
+  campaignId String
+  contactId  String
+  sentAt     DateTime?
+  openedAt   DateTime?
+  clickedAt  DateTime?
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contact  Contact  @relation(fields: [contactId], references: [id])
+
+  @@unique([campaignId, contactId])
+  @@map("campaign_recipients")
+}
+
+// ─── Chatbot Rules ────────────────────────────────────────────────────────────
+
+model ChatbotRule {
+  id        String   @id @default(uuid())
+  accountId String
+  trigger   String
+  response  String
+  isActive  Boolean  @default(true)
+  priority  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@map("chatbot_rules")
+}
+
+// ─── Chat Widget ──────────────────────────────────────────────────────────────
+
+model ChatWidget {
+  id              String   @id @default(uuid())
+  accountId       String   @unique
+  greeting        String   @default("Hi! How can we help you?")
+  primaryColor    String   @default("#6d28d9")
+  agentName       String   @default("Support")
+  agentAvatarUrl  String?
+  isEnabled       Boolean  @default(true)
+  allowedDomains  String[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("chat_widgets")
 }

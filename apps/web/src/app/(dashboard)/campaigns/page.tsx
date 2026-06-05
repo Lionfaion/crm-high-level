@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { CampaignsClient } from "./campaigns-client";
+
 export const metadata: Metadata = { title: "Campaigns" };
-export default function CampaignsPage() { return <ComingSoon module="Campaigns" />; }
+
+export default function CampaignsPage() {
+  return <CampaignsClient />;
+}

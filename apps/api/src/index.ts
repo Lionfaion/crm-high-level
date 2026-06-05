@@ -9,6 +9,7 @@ import errorHandlerPlugin from "./plugins/error-handler.js";
 import accountContextPlugin from "./plugins/account-context.js";
 import { registerRoutes } from "./routes/index.js";
 import systemRoutes from "./routes/system.js";
+import { initSocketIO } from "./modules/messaging/realtime.js";
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -64,6 +65,8 @@ const port = Number(process.env.API_PORT ?? 3001);
 async function start() {
   try {
     await app.listen({ port, host: "0.0.0.0" });
+    const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") ?? ["http://localhost:3000"];
+    initSocketIO(app.server, allowedOrigins);
   } catch (err) {
     app.log.error(err);
     process.exit(1);

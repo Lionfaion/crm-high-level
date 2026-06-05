@@ -8,6 +8,10 @@ import contactImportRoutes from "./contacts-import.js";
 import pipelineRoutes      from "./pipelines.js";
 import noteRoutes          from "./notes.js";
 import searchRoutes        from "./search.js";
+import messagingRoutes     from "../modules/messaging/messaging.routes.js";
+import campaignRoutes      from "../modules/messaging/campaign.routes.js";
+import chatbotRoutes       from "../modules/messaging/chatbot.routes.js";
+import widgetRoutes        from "../modules/messaging/widget.routes.js";
 
 export async function registerRoutes(app: FastifyInstance) {
   app.register(authRoutes,          { prefix: "/v1/auth" });
@@ -19,4 +23,8 @@ export async function registerRoutes(app: FastifyInstance) {
   app.register(pipelineRoutes,      { prefix: "/v1/pipelines" });
   app.register(noteRoutes,          { prefix: "/v1/notes" });
   app.register(searchRoutes,        { prefix: "/v1/search" });
+  app.register(messagingRoutes,     { prefix: "/v1/messaging" });
+  app.register(campaignRoutes,      { prefix: "/v1/campaigns" });
+  app.register(chatbotRoutes,       { prefix: "/v1/chatbot" });
+  app.register(widgetRoutes,        { prefix: "/v1/messaging/widget" });
 }
