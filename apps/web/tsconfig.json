@@ -11,6 +11,7 @@
         "./src/*"
       ]
     },
+    "lib": ["dom", "dom.iterable", "ES2022"],
     "allowJs": true,
     "noEmit": true,
     "incremental": true,
