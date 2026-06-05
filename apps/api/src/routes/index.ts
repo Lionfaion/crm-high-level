@@ -14,6 +14,8 @@ import chatbotRoutes       from "../modules/messaging/chatbot.routes.js";
 import widgetRoutes        from "../modules/messaging/widget.routes.js";
 import workflowRoutes      from "../modules/automation/workflow.routes.js";
 import calendarRoutes      from "../modules/calendar/calendar.routes.js";
+import formRoutes          from "../modules/forms/form.routes.js";
+import funnelRoutes        from "../modules/funnels/funnel.routes.js";
 
 export async function registerRoutes(app: FastifyInstance) {
   app.register(authRoutes,          { prefix: "/v1/auth" });
@@ -31,4 +33,6 @@ export async function registerRoutes(app: FastifyInstance) {
   app.register(widgetRoutes,        { prefix: "/v1/messaging/widget" });
   app.register(workflowRoutes,      { prefix: "/v1/workflows" });
   app.register(calendarRoutes,      { prefix: "/v1/calendar" });
+  app.register(formRoutes,          { prefix: "/v1/forms" });
+  app.register(funnelRoutes,        { prefix: "/v1/funnels" });
 }

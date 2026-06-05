@@ -103,6 +103,8 @@ model Account {
   calendarSettings  CalendarSettings?
   appointmentTypes  AppointmentType[]
   appointments      Appointment[]
+  forms             Form[]
+  funnels           Funnel[]
 
   @@map("accounts")
 }
@@ -159,6 +161,7 @@ model Contact {
   conversations     Conversation[]
   workflowRuns      WorkflowRun[]
   appointments      Appointment[]
+  formSubmissions   FormSubmission[]
   campaignRecipients CampaignRecipient[]
 
   @@index([accountId])
@@ -644,4 +647,111 @@ model Appointment {
   @@index([accountId])
   @@index([startAt])
   @@map("appointments")
+}
+
+// ─── Forms & Funnels ──────────────────────────────────────────────────────────
+
+enum FormFieldType {
+  TEXT
+  EMAIL
+  PHONE
+  SELECT
+  CHECKBOX
+  DATE
+  TEXTAREA
+  NUMBER
+  RADIO
+}
+
+model Form {
+  id          String   @id @default(uuid())
+  accountId   String
+  name        String
+  description String?
+  isActive    Boolean  @default(true)
+  redirectUrl String?
+  submitText  String   @default("Submit")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  account     Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  fields      FormField[]
+  submissions FormSubmission[]
+
+  @@index([accountId])
+  @@map("forms")
+}
+
+model FormField {
+  id           String        @id @default(uuid())
+  formId       String
+  label        String
+  fieldType    FormFieldType
+  placeholder  String?
+  required     Boolean       @default(false)
+  options      String[]
+  position     Int           @default(0)
+  mappedField  String?
+  createdAt    DateTime      @default(now())
+
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@index([formId])
+  @@map("form_fields")
+}
+
+model FormSubmission {
+  id        String   @id @default(uuid())
+  formId    String
+  contactId String?
+  data      Json
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  form    Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  contact Contact? @relation(fields: [contactId], references: [id])
+
+  @@index([formId])
+  @@index([contactId])
+  @@map("form_submissions")
+}
+
+// ─── Funnels ──────────────────────────────────────────────────────────────────
+
+model Funnel {
+  id          String   @id @default(uuid())
+  accountId   String
+  name        String
+  description String?
+  isActive    Boolean  @default(true)
+  domain      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  account Account     @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  pages   FunnelPage[]
+
+  @@index([accountId])
+  @@map("funnels")
+}
+
+model FunnelPage {
+  id          String   @id @default(uuid())
+  funnelId    String
+  name        String
+  slug        String
+  position    Int      @default(0)
+  content     Json     @default("{}")
+  isEnabled   Boolean  @default(true)
+  views       Int      @default(0)
+  conversions Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  funnel Funnel @relation(fields: [funnelId], references: [id], onDelete: Cascade)
+
+  @@unique([funnelId, slug])
+  @@index([funnelId])
+  @@map("funnel_pages")
 }

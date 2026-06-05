@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { FunnelsClient } from "./funnels-client";
+
 export const metadata: Metadata = { title: "Funnels & Websites" };
-export default function FunnelsPage() { return <ComingSoon module="Funnels & Websites" />; }
+
+export default function FunnelsPage() {
+  return <FunnelsClient />;
+}
