@@ -40,12 +40,12 @@ export function FunnelsClient() {
     setSaving(true);
     try {
       await api.post("/v1/funnels", { ...form, domain: form.domain || undefined });
-      toast.success("Funnel created");
+      toast.success("Embudo creado");
       setOpen(false);
       setForm({ name: "", description: "", domain: "" });
       mutate();
     } catch {
-      toast.error("Failed to create funnel");
+      toast.error("Error al crear el embudo");
     } finally {
       setSaving(false);
     }
@@ -55,31 +55,31 @@ export function FunnelsClient() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Funnels & Websites</h1>
-          <p className="text-muted-foreground">{funnels.length} funnels</p>
+          <h1 className="text-2xl font-bold">Embudos y Sitios Web</h1>
+          <p className="text-muted-foreground">{funnels.length} embudos</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" />New Funnel</Button>
+            <Button><Plus className="mr-2 h-4 w-4" />Nuevo Embudo</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Create Funnel</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>Crear Embudo</DialogTitle></DialogHeader>
             <div className="space-y-4 pt-2">
               <div className="grid gap-2">
-                <Label>Name</Label>
-                <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Lead Generation Funnel" />
+                <Label>Nombre</Label>
+                <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="ej. Embudo de Generación de Leads" />
               </div>
               <div className="grid gap-2">
-                <Label>Description</Label>
+                <Label>Descripción</Label>
                 <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
               </div>
               <div className="grid gap-2">
-                <Label>Custom Domain (optional)</Label>
-                <Input value={form.domain} onChange={(e) => setForm({ ...form, domain: e.target.value })} placeholder="funnel.yourdomain.com" />
+                <Label>Dominio personalizado (opcional)</Label>
+                <Input value={form.domain} onChange={(e) => setForm({ ...form, domain: e.target.value })} placeholder="embudo.tudominio.com" />
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                <Button onClick={create} disabled={saving || !form.name}>{saving ? "Creating…" : "Create"}</Button>
+                <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+                <Button onClick={create} disabled={saving || !form.name}>{saving ? "Creando…" : "Crear"}</Button>
               </div>
             </div>
           </DialogContent>
@@ -89,18 +89,18 @@ export function FunnelsClient() {
       {funnels.length === 0 ? (
         <div className="border rounded-lg p-12 text-center text-muted-foreground">
           <Filter className="mx-auto h-10 w-10 mb-3 opacity-30" />
-          <p className="font-medium">No funnels yet</p>
-          <p className="text-sm">Build multi-step landing pages and capture leads.</p>
+          <p className="font-medium">Sin embudos aún</p>
+          <p className="text-sm">Construí páginas de aterrizaje de múltiples pasos y captá leads.</p>
         </div>
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Pages</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Páginas</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead>Creado</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -113,7 +113,7 @@ export function FunnelsClient() {
                   <TableCell>{f._count.pages}</TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${f.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}>
-                      {f.isActive ? "Active" : "Draft"}
+                      {f.isActive ? "Activo" : "Borrador"}
                     </span>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
@@ -121,7 +121,7 @@ export function FunnelsClient() {
                   </TableCell>
                   <TableCell>
                     <Link href={`/funnels/${f.id}`}>
-                      <Button variant="outline" size="sm">Edit</Button>
+                      <Button variant="outline" size="sm">Editar</Button>
                     </Link>
                   </TableCell>
                 </TableRow>

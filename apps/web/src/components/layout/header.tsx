@@ -9,20 +9,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 const ROUTE_LABELS: Record<string, string> = {
-  "/dashboard":    "Dashboard",
-  "/contacts":     "Contacts",
-  "/pipelines":    "Pipelines",
-  "/activities":   "Activities",
-  "/notes":        "Notes",
-  "/messaging":    "Conversations",
-  "/campaigns":    "Campaigns",
-  "/funnels":      "Funnels & Websites",
-  "/calendar":     "Calendar",
-  "/reputation":   "Reputation",
-  "/reporting":    "Reporting",
-  "/memberships":  "Memberships",
-  "/payments":     "Payments",
-  "/settings":     "Settings",
+  "/dashboard":    "Panel",
+  "/contacts":     "Contactos",
+  "/pipelines":    "Embudos de venta",
+  "/activities":   "Actividades",
+  "/notes":        "Notas",
+  "/messaging":    "Conversaciones",
+  "/campaigns":    "Campañas",
+  "/funnels":      "Embudos y Sitios Web",
+  "/calendar":     "Calendario",
+  "/reputation":   "Reputación",
+  "/reporting":    "Reportes",
+  "/memberships":  "Membresías",
+  "/payments":     "Pagos",
+  "/settings":     "Configuración",
 };
 
 function usePageTitle() {
@@ -52,12 +52,12 @@ export function Header() {
       {/* Global search */}
       <div className="hidden md:flex items-center relative mx-4 flex-1 max-w-xs">
         <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
-        <Input placeholder="Search…" className="pl-8 h-8 text-sm" />
+        <Input placeholder="Buscar…" className="pl-8 h-8 text-sm" />
       </div>
 
       <div className="flex items-center gap-2 ml-auto">
         {/* Notification bell placeholder */}
-        <Button variant="ghost" size="icon" className="h-8 w-8 relative" title="Notifications">
+        <Button variant="ghost" size="icon" className="h-8 w-8 relative" title="Notificaciones">
           <Bell className="h-4 w-4" />
           <Badge className="absolute -top-0.5 -right-0.5 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
             0
@@ -77,7 +77,7 @@ export function Header() {
             size="icon"
             className="h-7 w-7 ml-1"
             onClick={() => signOut({ callbackUrl: "/login" })}
-            title="Sign out"
+            title="Cerrar sesión"
           >
             <LogOut className="h-3.5 w-3.5" />
           </Button>

@@ -23,7 +23,7 @@ export function PipelinesClient() {
   if (isLoading) {
     return (
       <div className="flex items-center gap-2 text-muted-foreground text-sm py-16 justify-center">
-        <Loader2 className="h-4 w-4 animate-spin" /> Loading pipelines…
+        <Loader2 className="h-4 w-4 animate-spin" /> Cargando embudos…
       </div>
     );
   }
@@ -33,9 +33,9 @@ export function PipelinesClient() {
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-16 text-center gap-2">
           <GitBranch className="h-10 w-10 text-muted-foreground/40" />
-          <p className="font-medium">No pipelines yet</p>
-          <p className="text-sm text-muted-foreground">Create your first pipeline to start tracking deals.</p>
-          <Button size="sm" className="mt-2 gap-1.5"><Plus className="h-4 w-4" /> New Pipeline</Button>
+          <p className="font-medium">Sin embudos aún</p>
+          <p className="text-sm text-muted-foreground">Creá tu primer embudo para comenzar a seguir negocios.</p>
+          <Button size="sm" className="mt-2 gap-1.5"><Plus className="h-4 w-4" /> Nuevo Embudo</Button>
         </CardContent>
       </Card>
     );
@@ -59,7 +59,7 @@ export function PipelinesClient() {
           </button>
         ))}
         <Button variant="outline" size="sm" className="gap-1.5">
-          <Plus className="h-4 w-4" /> New Pipeline
+          <Plus className="h-4 w-4" /> Nuevo Embudo
         </Button>
       </div>
 

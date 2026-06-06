@@ -39,14 +39,14 @@ const ACTION_TYPES = [
 ];
 
 const ACTION_LABELS: Record<string, string> = {
-  SEND_EMAIL:      "Send Email",
-  SEND_SMS:        "Send SMS",
-  ADD_TAG:         "Add Tag",
-  REMOVE_TAG:      "Remove Tag",
-  WAIT:            "Wait / Delay",
+  SEND_EMAIL:      "Enviar Correo",
+  SEND_SMS:        "Enviar SMS",
+  ADD_TAG:         "Agregar Etiqueta",
+  REMOVE_TAG:      "Quitar Etiqueta",
+  WAIT:            "Esperar / Retraso",
   WEBHOOK:         "Webhook",
-  UPDATE_CONTACT:  "Update Contact",
-  INTERNAL_NOTE:   "Internal Note",
+  UPDATE_CONTACT:  "Actualizar Contacto",
+  INTERNAL_NOTE:   "Nota Interna",
 };
 
 const ACTION_COLORS: Record<string, string> = {
@@ -76,22 +76,22 @@ export function WorkflowDetailClient({ id }: { id: string }) {
   async function addStep() {
     try {
       await api.post(`/v1/workflows/${id}/steps`, newAction);
-      toast.success("Step added");
+      toast.success("Paso agregado");
       setAddOpen(false);
       setNewAction({ actionType: "SEND_EMAIL", config: {} });
       mutate();
     } catch {
-      toast.error("Failed to add step");
+      toast.error("Error al agregar el paso");
     }
   }
 
   async function deleteStep(stepId: string) {
     try {
       await api.delete(`/v1/workflows/${id}/steps/${stepId}`);
-      toast.success("Step removed");
+      toast.success("Paso eliminado");
       mutate();
     } catch {
-      toast.error("Failed to remove step");
+      toast.error("Error al eliminar el paso");
     }
   }
 
@@ -100,10 +100,10 @@ export function WorkflowDetailClient({ id }: { id: string }) {
     const newStatus = workflow.status === "ACTIVE" ? "PAUSED" : "ACTIVE";
     try {
       await api.patch(`/v1/workflows/${id}`, { status: newStatus });
-      toast.success(`Workflow ${newStatus === "ACTIVE" ? "activated" : "paused"}`);
+      toast.success(`Automatización ${newStatus === "ACTIVE" ? "activada" : "pausada"}`);
       mutate();
     } catch {
-      toast.error("Failed to update status");
+      toast.error("Error al actualizar el estado");
     }
   }
 
@@ -114,18 +114,18 @@ export function WorkflowDetailClient({ id }: { id: string }) {
         contactId: contactId || undefined,
         triggeredBy: "manual",
       });
-      toast.success(`Workflow started — run ${result.runId.slice(0, 8)}`);
+      toast.success(`Automatización iniciada — ejecución ${result.runId.slice(0, 8)}`);
       setTriggerOpen(false);
       setContactId("");
     } catch {
-      toast.error("Failed to trigger workflow");
+      toast.error("Error al ejecutar la automatización");
     } finally {
       setRunning(false);
     }
   }
 
   if (!workflow) {
-    return <div className="p-6 text-muted-foreground">Loading…</div>;
+    return <div className="p-6 text-muted-foreground">Cargando…</div>;
   }
 
   return (
@@ -148,10 +148,10 @@ export function WorkflowDetailClient({ id }: { id: string }) {
           </div>
         </div>
         <Button variant="outline" size="sm" onClick={toggleActive}>
-          {workflow.status === "ACTIVE" ? "Pause" : "Activate"}
+          {workflow.status === "ACTIVE" ? "Pausar" : "Activar"}
         </Button>
         <Button size="sm" onClick={() => setTriggerOpen(true)}>
-          <Play className="mr-1 h-3 w-3" /> Test Run
+          <Play className="mr-1 h-3 w-3" /> Prueba
         </Button>
       </div>
 
@@ -159,7 +159,7 @@ export function WorkflowDetailClient({ id }: { id: string }) {
       <div className="space-y-3">
         {/* Trigger node */}
         <div className="border-2 border-dashed border-primary/40 rounded-lg p-4 bg-primary/5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary/60 mb-1">Trigger</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-primary/60 mb-1">Disparador</p>
           <p className="font-medium">{workflow.triggerType.replace(/_/g, " ")}</p>
         </div>
 
@@ -207,17 +207,17 @@ export function WorkflowDetailClient({ id }: { id: string }) {
           className="w-full border-dashed"
           onClick={() => setAddOpen(true)}
         >
-          <Plus className="mr-2 h-4 w-4" /> Add Step
+          <Plus className="mr-2 h-4 w-4" /> Agregar Paso
         </Button>
       </div>
 
       {/* Add Step Dialog */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Add Step</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Agregar Paso</DialogTitle></DialogHeader>
           <div className="space-y-4 pt-2">
             <div className="grid gap-2">
-              <Label>Action</Label>
+              <Label>Acción</Label>
               <Select
                 value={newAction.actionType}
                 onValueChange={(v) => setNewAction({ ...newAction, actionType: v })}
@@ -234,16 +234,16 @@ export function WorkflowDetailClient({ id }: { id: string }) {
             {(newAction.actionType === "SEND_EMAIL") && (
               <>
                 <div className="grid gap-2">
-                  <Label>Subject</Label>
+                  <Label>Asunto</Label>
                   <Input
-                    placeholder="Email subject"
+                    placeholder="Asunto del correo"
                     onChange={(e) => setNewAction({ ...newAction, config: { ...newAction.config, subject: e.target.value } })}
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Body</Label>
+                  <Label>Cuerpo</Label>
                   <Textarea
-                    placeholder="Hi {{firstName}}, …"
+                    placeholder="Hola {{firstName}}, …"
                     rows={3}
                     onChange={(e) => setNewAction({ ...newAction, config: { ...newAction.config, body: e.target.value } })}
                   />
@@ -253,9 +253,9 @@ export function WorkflowDetailClient({ id }: { id: string }) {
 
             {(newAction.actionType === "SEND_SMS") && (
               <div className="grid gap-2">
-                <Label>Message</Label>
+                <Label>Mensaje</Label>
                 <Textarea
-                  placeholder="Hi {{firstName}}, …"
+                  placeholder="Hola {{firstName}}, …"
                   rows={3}
                   onChange={(e) => setNewAction({ ...newAction, config: { ...newAction.config, body: e.target.value } })}
                 />
@@ -264,7 +264,7 @@ export function WorkflowDetailClient({ id }: { id: string }) {
 
             {(newAction.actionType === "ADD_TAG" || newAction.actionType === "REMOVE_TAG") && (
               <div className="grid gap-2">
-                <Label>Tag</Label>
+                <Label>Etiqueta</Label>
                 <Input
                   placeholder="tag-name"
                   onChange={(e) => setNewAction({ ...newAction, config: { tag: e.target.value } })}
@@ -274,7 +274,7 @@ export function WorkflowDetailClient({ id }: { id: string }) {
 
             {newAction.actionType === "WAIT" && (
               <div className="grid gap-2">
-                <Label>Delay (seconds)</Label>
+                <Label>Retraso (segundos)</Label>
                 <Input
                   type="number"
                   placeholder="60"
@@ -285,7 +285,7 @@ export function WorkflowDetailClient({ id }: { id: string }) {
 
             {newAction.actionType === "WEBHOOK" && (
               <div className="grid gap-2">
-                <Label>URL</Label>
+                <Label>URL del webhook</Label>
                 <Input
                   placeholder="https://example.com/webhook"
                   onChange={(e) => setNewAction({ ...newAction, config: { url: e.target.value } })}
@@ -295,9 +295,9 @@ export function WorkflowDetailClient({ id }: { id: string }) {
 
             {newAction.actionType === "INTERNAL_NOTE" && (
               <div className="grid gap-2">
-                <Label>Note</Label>
+                <Label>Nota</Label>
                 <Textarea
-                  placeholder="Automated note…"
+                  placeholder="Nota automática…"
                   rows={3}
                   onChange={(e) => setNewAction({ ...newAction, config: { body: e.target.value } })}
                 />
@@ -305,8 +305,8 @@ export function WorkflowDetailClient({ id }: { id: string }) {
             )}
 
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
-              <Button onClick={addStep}>Add</Button>
+              <Button variant="outline" onClick={() => setAddOpen(false)}>Cancelar</Button>
+              <Button onClick={addStep}>Agregar</Button>
             </div>
           </div>
         </DialogContent>
@@ -315,20 +315,20 @@ export function WorkflowDetailClient({ id }: { id: string }) {
       {/* Test Run Dialog */}
       <Dialog open={triggerOpen} onOpenChange={setTriggerOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Test Run</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Prueba de ejecución</DialogTitle></DialogHeader>
           <div className="space-y-4 pt-2">
             <div className="grid gap-2">
-              <Label>Contact ID (optional)</Label>
+              <Label>ID de contacto (opcional)</Label>
               <Input
                 value={contactId}
                 onChange={(e) => setContactId(e.target.value)}
-                placeholder="UUID of contact to use"
+                placeholder="UUID del contacto a utilizar"
               />
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setTriggerOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setTriggerOpen(false)}>Cancelar</Button>
               <Button onClick={triggerManually} disabled={running}>
-                {running ? "Running…" : "Run Now"}
+                {running ? "Ejecutando…" : "Ejecutar ahora"}
               </Button>
             </div>
           </div>

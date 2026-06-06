@@ -41,7 +41,7 @@ export function ContactsClient() {
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search contacts…"
+            placeholder="Buscar contactos…"
             className="pl-8"
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
@@ -50,14 +50,14 @@ export function ContactsClient() {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="gap-1.5" asChild>
             <a href={`/api/contacts/export`} download>
-              <Download className="h-4 w-4" /> Export
+              <Download className="h-4 w-4" /> Exportar
             </a>
           </Button>
           <Button variant="outline" size="sm" className="gap-1.5">
-            <Upload className="h-4 w-4" /> Import
+            <Upload className="h-4 w-4" /> Importar
           </Button>
           <Button size="sm" className="gap-1.5">
-            <Plus className="h-4 w-4" /> New Contact
+            <Plus className="h-4 w-4" /> Nuevo Contacto
           </Button>
         </div>
       </div>
@@ -72,15 +72,15 @@ export function ContactsClient() {
       {/* List */}
       {isLoading ? (
         <div className="flex items-center gap-2 text-muted-foreground text-sm py-8 justify-center">
-          <Loader2 className="h-4 w-4 animate-spin" /> Loading contacts…
+          <Loader2 className="h-4 w-4 animate-spin" /> Cargando contactos…
         </div>
       ) : !data?.contacts.length ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 text-center gap-2">
             <UserCircle className="h-10 w-10 text-muted-foreground/40" />
-            <p className="font-medium">No contacts yet</p>
-            <p className="text-sm text-muted-foreground">Add your first contact to get started.</p>
-            <Button size="sm" className="mt-2 gap-1.5"><Plus className="h-4 w-4" /> New Contact</Button>
+            <p className="font-medium">Sin contactos aún</p>
+            <p className="text-sm text-muted-foreground">Agregá tu primer contacto para comenzar.</p>
+            <Button size="sm" className="mt-2 gap-1.5"><Plus className="h-4 w-4" /> Nuevo Contacto</Button>
           </CardContent>
         </Card>
       ) : (
@@ -88,11 +88,11 @@ export function ContactsClient() {
           <table className="w-full text-sm">
             <thead className="bg-muted/50 border-b">
               <tr>
-                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground">Name</th>
-                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground hidden sm:table-cell">Email</th>
-                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground hidden md:table-cell">Company</th>
-                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground">Status</th>
-                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground hidden lg:table-cell">Tags</th>
+                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground">Nombre</th>
+                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground hidden sm:table-cell">Correo electrónico</th>
+                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground hidden md:table-cell">Empresa</th>
+                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground">Estado</th>
+                <th className="text-left px-4 py-2.5 font-medium text-muted-foreground hidden lg:table-cell">Etiquetas</th>
               </tr>
             </thead>
             <tbody className="divide-y">

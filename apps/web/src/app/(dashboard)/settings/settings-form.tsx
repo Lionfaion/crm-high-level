@@ -77,7 +77,7 @@ export function SettingsForm() {
   if (isLoading) {
     return (
       <div className="flex items-center gap-2 text-muted-foreground text-sm">
-        <Loader2 className="h-4 w-4 animate-spin" /> Loading settings…
+        <Loader2 className="h-4 w-4 animate-spin" /> Cargando configuración…
       </div>
     );
   }
@@ -87,23 +87,23 @@ export function SettingsForm() {
       <Tabs defaultValue="general">
         <TabsList>
           <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="branding">Branding</TabsTrigger>
-          <TabsTrigger value="social">Social</TabsTrigger>
-          <TabsTrigger value="address">Address</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="branding">Marca</TabsTrigger>
+          <TabsTrigger value="social">Redes sociales</TabsTrigger>
+          <TabsTrigger value="address">Dirección</TabsTrigger>
+          <TabsTrigger value="notifications">Notificaciones</TabsTrigger>
         </TabsList>
 
         {/* ── General ─────────────────────────────────────────────────── */}
         <TabsContent value="general">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Business Info</CardTitle>
-              <CardDescription>Your primary business details.</CardDescription>
+              <CardTitle className="text-base">Información del negocio</CardTitle>
+              <CardDescription>Tus datos principales del negocio.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label>Business name</Label>
+                  <Label>Nombre del negocio</Label>
                   <Input
                     value={settings.businessName ?? ""}
                     onChange={(e) => set("businessName", e.target.value)}
@@ -111,7 +111,7 @@ export function SettingsForm() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Support email</Label>
+                  <Label>Correo de soporte</Label>
                   <Input
                     type="email"
                     value={settings.supportEmail ?? ""}
@@ -120,7 +120,7 @@ export function SettingsForm() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Support phone</Label>
+                  <Label>Teléfono de soporte</Label>
                   <Input
                     value={settings.supportPhone ?? ""}
                     onChange={(e) => set("supportPhone", e.target.value)}
@@ -128,7 +128,7 @@ export function SettingsForm() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Currency</Label>
+                  <Label>Moneda</Label>
                   <Input
                     value={settings.currency ?? "USD"}
                     onChange={(e) => set("currency", e.target.value)}
@@ -137,7 +137,7 @@ export function SettingsForm() {
                   />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
-                  <Label>Timezone</Label>
+                  <Label>Zona horaria</Label>
                   <Input
                     value={settings.timezone ?? "UTC"}
                     onChange={(e) => set("timezone", e.target.value)}
@@ -153,12 +153,12 @@ export function SettingsForm() {
         <TabsContent value="branding">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Branding</CardTitle>
-              <CardDescription>Logo, favicon and brand colors.</CardDescription>
+              <CardTitle className="text-base">Marca</CardTitle>
+              <CardDescription>Logo, favicon y colores de la marca.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-1.5">
-                <Label>Logo URL</Label>
+                <Label>URL del logo</Label>
                 <Input
                   value={settings.logoUrl ?? ""}
                   onChange={(e) => set("logoUrl", e.target.value)}
@@ -166,7 +166,7 @@ export function SettingsForm() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label>Favicon URL</Label>
+                <Label>URL del favicon</Label>
                 <Input
                   value={(settings as any).faviconUrl ?? ""}
                   onChange={(e) => set("faviconUrl" as any, e.target.value)}
@@ -175,7 +175,7 @@ export function SettingsForm() {
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label>Primary color</Label>
+                  <Label>Color primario</Label>
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
@@ -192,7 +192,7 @@ export function SettingsForm() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Secondary color</Label>
+                  <Label>Color secundario</Label>
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
@@ -217,8 +217,8 @@ export function SettingsForm() {
         <TabsContent value="social">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Social Links</CardTitle>
-              <CardDescription>Connect your social media profiles.</CardDescription>
+              <CardTitle className="text-base">Redes sociales</CardTitle>
+              <CardDescription>Conectá tus perfiles de redes sociales.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {(
@@ -246,12 +246,12 @@ export function SettingsForm() {
         <TabsContent value="address">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Business Address</CardTitle>
-              <CardDescription>Physical location of your business.</CardDescription>
+              <CardTitle className="text-base">Dirección del negocio</CardTitle>
+              <CardDescription>Ubicación física de tu negocio.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-1.5">
-                <Label>Street address</Label>
+                <Label>Calle</Label>
                 <Input
                   value={settings.address ?? ""}
                   onChange={(e) => set("address", e.target.value)}
@@ -260,19 +260,19 @@ export function SettingsForm() {
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label>City</Label>
+                  <Label>Ciudad</Label>
                   <Input value={settings.city ?? ""} onChange={(e) => set("city", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>State / Province</Label>
+                  <Label>Provincia / Estado</Label>
                   <Input value={settings.state ?? ""} onChange={(e) => set("state", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>ZIP / Postal code</Label>
+                  <Label>Código postal</Label>
                   <Input value={settings.zipCode ?? ""} onChange={(e) => set("zipCode", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Country</Label>
+                  <Label>País</Label>
                   <Input value={settings.country ?? ""} onChange={(e) => set("country", e.target.value)} />
                 </div>
               </div>
@@ -284,14 +284,14 @@ export function SettingsForm() {
         <TabsContent value="notifications">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Notifications</CardTitle>
-              <CardDescription>Choose how you receive alerts.</CardDescription>
+              <CardTitle className="text-base">Notificaciones</CardTitle>
+              <CardDescription>Elegí cómo recibir alertas.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">Email notifications</p>
-                  <p className="text-xs text-muted-foreground">Receive updates via email</p>
+                  <p className="text-sm font-medium">Notificaciones por correo</p>
+                  <p className="text-xs text-muted-foreground">Recibí actualizaciones por correo electrónico</p>
                 </div>
                 <Switch
                   checked={settings.emailNotifications ?? true}
@@ -300,8 +300,8 @@ export function SettingsForm() {
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">SMS notifications</p>
-                  <p className="text-xs text-muted-foreground">Receive updates via SMS</p>
+                  <p className="text-sm font-medium">Notificaciones por SMS</p>
+                  <p className="text-xs text-muted-foreground">Recibí actualizaciones por SMS</p>
                 </div>
                 <Switch
                   checked={settings.smsNotifications ?? false}
@@ -317,9 +317,9 @@ export function SettingsForm() {
       <div className="flex items-center gap-3 pt-2">
         <Button onClick={handleSave} disabled={saving || !accountId} className="gap-2">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          {saving ? "Saving…" : "Save changes"}
+          {saving ? "Guardando…" : "Guardar cambios"}
         </Button>
-        {saved && <span className="text-sm text-green-600">Settings saved.</span>}
+        {saved && <span className="text-sm text-green-600">Configuración guardada.</span>}
       </div>
     </div>
   );

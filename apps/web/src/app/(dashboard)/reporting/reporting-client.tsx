@@ -73,8 +73,8 @@ export function ReportingClient() {
   return (
     <div className="p-6 space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Reporting & Analytics</h1>
-        <p className="text-muted-foreground">Business performance overview</p>
+        <h1 className="text-2xl font-bold">Reportes y Analíticas</h1>
+        <p className="text-muted-foreground">Resumen del rendimiento del negocio</p>
       </div>
 
       {/* KPI grid */}
@@ -82,35 +82,35 @@ export function ReportingClient() {
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             icon={Users}
-            label="Total Contacts"
+            label="Total de Contactos"
             value={stats.contacts.total.toLocaleString()}
-            sub={`+${stats.contacts.newThisMonth} this month`}
+            sub={`+${stats.contacts.newThisMonth} este mes`}
           />
           <StatCard
             icon={Target}
-            label="Open Opportunities"
+            label="Oportunidades Abiertas"
             value={stats.pipeline.openOpportunities}
-            sub={`${formatCents(stats.pipeline.wonValue)} won`}
+            sub={`${formatCents(stats.pipeline.wonValue)} ganado`}
           />
           <StatCard
             icon={DollarSign}
-            label="Total Revenue"
+            label="Ingresos Totales"
             value={formatCents(stats.payments.totalRevenue)}
           />
           <StatCard
             icon={MessageSquare}
-            label="Open Conversations"
+            label="Conversaciones Abiertas"
             value={stats.messaging.openConversations}
-            sub={`${stats.messaging.sentCampaigns} campaigns sent`}
+            sub={`${stats.messaging.sentCampaigns} campañas enviadas`}
           />
           <StatCard
             icon={Calendar}
-            label="Scheduled Appointments"
+            label="Turnos Programados"
             value={stats.calendar.scheduledAppointments}
           />
           <StatCard
             icon={Star}
-            label="Avg. Rating"
+            label="Calificación Promedio"
             value={stats.reputation.averageRating > 0 ? `${stats.reputation.averageRating} ★` : "N/A"}
           />
         </div>
@@ -121,7 +121,7 @@ export function ReportingClient() {
         {growth?.data && growth.data.length > 0 && (
           <div className="border rounded-lg p-5">
             <h2 className="font-semibold mb-4 flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" /> Contact Growth (30 days)
+              <TrendingUp className="h-4 w-4" /> Crecimiento de Contactos (30 días)
             </h2>
             <div className="flex items-end gap-1 h-24">
               {growth.data.map((p) => {
@@ -148,7 +148,7 @@ export function ReportingClient() {
         {funnel?.data && funnel.data.length > 0 && (
           <div className="border rounded-lg p-5">
             <h2 className="font-semibold mb-4 flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" /> Pipeline Funnel
+              <BarChart3 className="h-4 w-4" /> Embudo de Ventas
             </h2>
             <div className="space-y-2">
               {funnel.data.map((s) => (
@@ -162,7 +162,7 @@ export function ReportingClient() {
         {revenue?.data && revenue.data.length > 0 && (
           <div className="border rounded-lg p-5">
             <h2 className="font-semibold mb-4 flex items-center gap-2">
-              <DollarSign className="h-4 w-4" /> Revenue (6 months)
+              <DollarSign className="h-4 w-4" /> Ingresos (6 meses)
             </h2>
             <div className="space-y-2">
               {revenue.data.map((r) => (
@@ -179,11 +179,11 @@ export function ReportingClient() {
 
         {/* Export */}
         <div className="border rounded-lg p-5">
-          <h2 className="font-semibold mb-4">Data Export</h2>
-          <p className="text-sm text-muted-foreground mb-4">Download your data as CSV for analysis in Excel or Google Sheets.</p>
+          <h2 className="font-semibold mb-4">Exportar datos</h2>
+          <p className="text-sm text-muted-foreground mb-4">Descargá tus datos en CSV para analizarlos en Excel o Google Sheets.</p>
           <a href="/api/proxy/v1/reporting/contacts/export.csv" download>
             <button className="inline-flex items-center gap-2 px-4 py-2 border rounded-md text-sm font-medium hover:bg-muted transition-colors">
-              <Users className="h-4 w-4" /> Export Contacts CSV
+              <Users className="h-4 w-4" /> Exportar Contactos CSV
             </button>
           </a>
         </div>

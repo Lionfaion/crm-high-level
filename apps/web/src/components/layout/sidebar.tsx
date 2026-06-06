@@ -37,9 +37,9 @@ type NavItem = {
 
 const navGroups: { title: string; items: NavItem[] }[] = [
   {
-    title: "Overview",
+    title: "Resumen",
     items: [
-      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/dashboard", label: "Panel", icon: LayoutDashboard },
     ],
   },
   {
@@ -47,64 +47,64 @@ const navGroups: { title: string; items: NavItem[] }[] = [
     items: [
       {
         href: "/contacts",
-        label: "Contacts",
+        label: "Contactos",
         icon: Users,
         children: [
-          { href: "/contacts",       label: "All Contacts" },
-          { href: "/contacts/lists", label: "Lists & Segments" },
+          { href: "/contacts",       label: "Todos los contactos" },
+          { href: "/contacts/lists", label: "Listas y Segmentos" },
         ],
       },
       {
         href: "/pipelines",
-        label: "Pipelines",
+        label: "Embudos de venta",
         icon: GitBranch,
         children: [
-          { href: "/pipelines",             label: "All Pipelines" },
-          { href: "/pipelines/opportunities", label: "Opportunities" },
+          { href: "/pipelines",               label: "Todos los embudos" },
+          { href: "/pipelines/opportunities", label: "Oportunidades" },
         ],
       },
-      { href: "/activities", label: "Activities", icon: Activity },
-      { href: "/notes",      label: "Notes",      icon: FileText },
+      { href: "/activities", label: "Actividades", icon: Activity },
+      { href: "/notes",      label: "Notas",       icon: FileText },
     ],
   },
   {
-    title: "Messaging",
+    title: "Mensajería",
     items: [
       {
         href: "/messaging",
-        label: "Conversations",
+        label: "Conversaciones",
         icon: MessageSquare,
         children: [
-          { href: "/messaging/inbox",    label: "Inbox" },
-          { href: "/messaging/email",    label: "Email" },
-          { href: "/messaging/sms",      label: "SMS" },
-          { href: "/messaging/voicemail",label: "Voicemail" },
+          { href: "/messaging/inbox",     label: "Bandeja de entrada" },
+          { href: "/messaging/email",     label: "Correo electrónico" },
+          { href: "/messaging/sms",       label: "SMS" },
+          { href: "/messaging/voicemail", label: "Correo de voz" },
         ],
       },
-      { href: "/campaigns", label: "Campaigns", icon: Megaphone },
-      { href: "/workflows", label: "Workflows", icon: Zap },
+      { href: "/campaigns", label: "Campañas",        icon: Megaphone },
+      { href: "/workflows", label: "Automatizaciones", icon: Zap },
     ],
   },
   {
     title: "Marketing",
     items: [
-      { href: "/funnels",       label: "Funnels & Websites", icon: Filter },
-      { href: "/calendar",      label: "Calendar",           icon: Calendar },
-      { href: "/reputation",    label: "Reputation",         icon: Star },
-      { href: "/reporting",     label: "Reporting",          icon: BarChart3 },
+      { href: "/funnels",    label: "Embudos y Sitios Web", icon: Filter },
+      { href: "/calendar",   label: "Calendario",           icon: Calendar },
+      { href: "/reputation", label: "Reputación",           icon: Star },
+      { href: "/reporting",  label: "Reportes",             icon: BarChart3 },
     ],
   },
   {
-    title: "Commerce",
+    title: "Comercio",
     items: [
-      { href: "/memberships", label: "Memberships", icon: GraduationCap },
-      { href: "/payments",    label: "Payments",    icon: CreditCard },
+      { href: "/memberships", label: "Membresías", icon: GraduationCap },
+      { href: "/payments",    label: "Pagos",      icon: CreditCard },
     ],
   },
 ];
 
 const bottomItems: NavItem[] = [
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/settings", label: "Configuración", icon: Settings },
 ];
 
 function NavItemRow({ item, depth = 0 }: { item: NavItem; depth?: number }) {

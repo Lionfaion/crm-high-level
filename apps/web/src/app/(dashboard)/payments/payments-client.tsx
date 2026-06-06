@@ -82,12 +82,12 @@ export function PaymentsClient() {
           unitPrice: Math.round(Number(form.unitPrice) * 100),
         }],
       });
-      toast.success("Invoice created");
+      toast.success("Factura creada");
       setOpen(false);
       setForm({ contactId: "", description: "", quantity: "1", unitPrice: "", taxRate: "0" });
       mutate();
     } catch {
-      toast.error("Failed to create invoice");
+      toast.error("Error al crear la factura");
     } finally {
       setSaving(false);
     }
@@ -97,10 +97,10 @@ export function PaymentsClient() {
     setActing(id);
     try {
       await api.post(`/v1/payments/invoices/${id}/send`, {});
-      toast.success("Invoice marked as sent");
+      toast.success("Factura marcada como enviada");
       mutate();
     } catch {
-      toast.error("Failed to send invoice");
+      toast.error("Error al enviar la factura");
     } finally {
       setActing(null);
     }
@@ -110,10 +110,10 @@ export function PaymentsClient() {
     setActing(id);
     try {
       await api.post(`/v1/payments/invoices/${id}/pay`, {});
-      toast.success("Invoice marked as paid");
+      toast.success("Factura marcada como pagada");
       mutate();
     } catch {
-      toast.error("Failed to mark invoice as paid");
+      toast.error("Error al marcar la factura como pagada");
     } finally {
       setActing(null);
     }
@@ -123,42 +123,42 @@ export function PaymentsClient() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Payments</h1>
-          <p className="text-muted-foreground">{data?.total ?? 0} invoices</p>
+          <h1 className="text-2xl font-bold">Pagos</h1>
+          <p className="text-muted-foreground">{data?.total ?? 0} facturas</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" />New Invoice</Button>
+            <Button><Plus className="mr-2 h-4 w-4" />Nueva Factura</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Create Invoice</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>Crear Factura</DialogTitle></DialogHeader>
             <div className="space-y-4 pt-2">
               <div className="grid gap-2">
-                <Label>Contact ID (optional)</Label>
+                <Label>ID de contacto (opcional)</Label>
                 <Input value={form.contactId} onChange={(e) => setForm({ ...form, contactId: e.target.value })} placeholder="UUID" />
               </div>
               <div className="grid gap-2">
-                <Label>Item Description</Label>
-                <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Service / product name" />
+                <Label>Descripción del ítem</Label>
+                <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Nombre del servicio / producto" />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div className="grid gap-2">
-                  <Label>Quantity</Label>
+                  <Label>Cantidad</Label>
                   <Input type="number" min="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Unit Price ($)</Label>
+                  <Label>Precio unitario ($)</Label>
                   <Input type="number" min="0" step="0.01" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: e.target.value })} placeholder="99.00" />
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label>Tax Rate (%)</Label>
+                <Label>Tasa de impuesto (%)</Label>
                 <Input type="number" min="0" max="100" step="0.1" value={form.taxRate} onChange={(e) => setForm({ ...form, taxRate: e.target.value })} />
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
                 <Button onClick={createInvoice} disabled={saving || !form.description || !form.unitPrice}>
-                  {saving ? "Creating…" : "Create"}
+                  {saving ? "Creando…" : "Crear"}
                 </Button>
               </div>
             </div>
@@ -170,15 +170,15 @@ export function PaymentsClient() {
       {summary && (
         <div className="grid grid-cols-3 gap-4 mb-8">
           <div className="border rounded-lg p-4">
-            <p className="text-sm text-muted-foreground">Total Revenue</p>
+            <p className="text-sm text-muted-foreground">Ingresos totales</p>
             <p className="text-2xl font-bold mt-1 text-green-600">{formatCents(summary.totalRevenue)}</p>
           </div>
           <div className="border rounded-lg p-4">
-            <p className="text-sm text-muted-foreground">Outstanding</p>
+            <p className="text-sm text-muted-foreground">Pendiente</p>
             <p className="text-2xl font-bold mt-1 text-yellow-600">{formatCents(summary.pendingRevenue)}</p>
           </div>
           <div className="border rounded-lg p-4">
-            <p className="text-sm text-muted-foreground">Total Invoices</p>
+            <p className="text-sm text-muted-foreground">Total de facturas</p>
             <p className="text-2xl font-bold mt-1">{summary.invoiceCount}</p>
           </div>
         </div>
@@ -187,20 +187,20 @@ export function PaymentsClient() {
       {invoices.length === 0 ? (
         <div className="border rounded-lg p-12 text-center text-muted-foreground">
           <DollarSign className="mx-auto h-10 w-10 mb-3 opacity-30" />
-          <p className="font-medium">No invoices yet</p>
-          <p className="text-sm">Create invoices and track payments from your contacts.</p>
+          <p className="font-medium">Sin facturas aún</p>
+          <p className="text-sm">Creá facturas y hacé seguimiento de los pagos de tus contactos.</p>
         </div>
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Number</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Número</TableHead>
+                <TableHead>Contacto</TableHead>
+                <TableHead>Estado</TableHead>
                 <TableHead>Total</TableHead>
-                <TableHead>Due</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>Vencimiento</TableHead>
+                <TableHead>Creada</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -229,12 +229,12 @@ export function PaymentsClient() {
                     <div className="flex gap-1">
                       {inv.status === "DRAFT" && (
                         <Button size="sm" variant="outline" onClick={() => sendInvoice(inv.id)} disabled={acting === inv.id}>
-                          <Send className="h-3 w-3 mr-1" />Send
+                          <Send className="h-3 w-3 mr-1" />Enviar
                         </Button>
                       )}
                       {(inv.status === "SENT" || inv.status === "OVERDUE") && (
                         <Button size="sm" variant="outline" onClick={() => markPaid(inv.id)} disabled={acting === inv.id}>
-                          <CheckCircle className="h-3 w-3 mr-1" />Paid
+                          <CheckCircle className="h-3 w-3 mr-1" />Pagada
                         </Button>
                       )}
                     </div>

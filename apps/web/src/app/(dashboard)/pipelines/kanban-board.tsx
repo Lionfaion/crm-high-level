@@ -144,7 +144,7 @@ export function KanbanBoard({ pipelineId }: { pipelineId: string }) {
   if (isLoading) {
     return (
       <div className="flex items-center gap-2 text-muted-foreground text-sm py-16 justify-center">
-        <Loader2 className="h-4 w-4 animate-spin" /> Loading board…
+        <Loader2 className="h-4 w-4 animate-spin" /> Cargando tablero…
       </div>
     );
   }

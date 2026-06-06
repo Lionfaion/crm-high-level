@@ -60,7 +60,7 @@ export function InboxClient() {
       setReply("");
       mutateConv();
     } catch {
-      toast.error("Failed to send reply");
+      toast.error("Error al enviar la respuesta");
     } finally {
       setSending(false);
     }
@@ -78,14 +78,14 @@ export function InboxClient() {
       {/* Sidebar list */}
       <div className="w-80 border-r flex flex-col">
         <div className="p-4 border-b">
-          <h1 className="text-lg font-semibold">Inbox</h1>
-          <p className="text-sm text-muted-foreground">{data?.total ?? 0} conversations</p>
+          <h1 className="text-lg font-semibold">Bandeja de entrada</h1>
+          <p className="text-sm text-muted-foreground">{data?.total ?? 0} conversaciones</p>
         </div>
         <ScrollArea className="flex-1">
           {conversations.length === 0 && (
             <div className="p-8 text-center text-muted-foreground">
               <MessageSquare className="mx-auto h-8 w-8 mb-2 opacity-40" />
-              <p className="text-sm">No conversations yet</p>
+              <p className="text-sm">Sin conversaciones aún</p>
             </div>
           )}
           {conversations.map((c) => (
@@ -125,7 +125,7 @@ export function InboxClient() {
           <div className="flex-1 flex items-center justify-center text-muted-foreground">
             <div className="text-center">
               <MessageSquare className="mx-auto h-12 w-12 mb-3 opacity-30" />
-              <p>Select a conversation</p>
+              <p>Seleccioná una conversación</p>
             </div>
           </div>
         ) : (
@@ -136,12 +136,12 @@ export function InboxClient() {
                   {conv.contact.firstName} {conv.contact.lastName ?? ""}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  {conv.contact.email ?? conv.contact.phone ?? "No contact info"}
+                  {conv.contact.email ?? conv.contact.phone ?? "Sin información de contacto"}
                 </p>
               </div>
               {conv.status === "OPEN" && (
                 <Button variant="outline" size="sm" onClick={closeConversation}>
-                  Close
+                  Cerrar
                 </Button>
               )}
             </div>
@@ -175,7 +175,7 @@ export function InboxClient() {
                 <Textarea
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
-                  placeholder="Type a reply…"
+                  placeholder="Escribí una respuesta…"
                   className="resize-none"
                   rows={2}
                   onKeyDown={(e) => {

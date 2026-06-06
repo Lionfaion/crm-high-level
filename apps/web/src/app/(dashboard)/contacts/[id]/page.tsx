@@ -20,19 +20,19 @@ export default function ContactDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center gap-2 text-muted-foreground text-sm py-16 justify-center">
-        <Loader2 className="h-4 w-4 animate-spin" /> Loading contact…
+        <Loader2 className="h-4 w-4 animate-spin" /> Cargando contacto…
       </div>
     );
   }
 
   const c = data?.contact;
-  if (!c) return <p className="text-muted-foreground text-sm">Contact not found.</p>;
+  if (!c) return <p className="text-muted-foreground text-sm">Contacto no encontrado.</p>;
 
   return (
     <div className="max-w-4xl space-y-6">
       {/* Back */}
       <Link href="/contacts" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit">
-        <ArrowLeft className="h-4 w-4" /> All Contacts
+        <ArrowLeft className="h-4 w-4" /> Todos los contactos
       </Link>
 
       {/* Header */}
@@ -49,7 +49,7 @@ export default function ContactDetailPage() {
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm">Contact Info</CardTitle>
+              <CardTitle className="text-sm">Información de contacto</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               {c.email && (
@@ -86,7 +86,7 @@ export default function ContactDetailPage() {
 
           {c.tags?.length > 0 && (
             <Card>
-              <CardHeader className="pb-3"><CardTitle className="text-sm">Tags</CardTitle></CardHeader>
+              <CardHeader className="pb-3"><CardTitle className="text-sm">Etiquetas</CardTitle></CardHeader>
               <CardContent className="flex flex-wrap gap-1.5">
                 {c.tags.map((t: string) => (
                   <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
@@ -100,14 +100,14 @@ export default function ContactDetailPage() {
         <div className="md:col-span-2">
           <Tabs defaultValue="notes">
             <TabsList>
-              <TabsTrigger value="notes">Notes ({c.notes?.length ?? 0})</TabsTrigger>
-              <TabsTrigger value="opportunities">Opportunities ({c.opportunities?.length ?? 0})</TabsTrigger>
-              <TabsTrigger value="activity">Activity</TabsTrigger>
+              <TabsTrigger value="notes">Notas ({c.notes?.length ?? 0})</TabsTrigger>
+              <TabsTrigger value="opportunities">Oportunidades ({c.opportunities?.length ?? 0})</TabsTrigger>
+              <TabsTrigger value="activity">Actividad</TabsTrigger>
             </TabsList>
 
             <TabsContent value="notes" className="space-y-3 mt-3">
               {!c.notes?.length ? (
-                <p className="text-sm text-muted-foreground py-6 text-center">No notes yet.</p>
+                <p className="text-sm text-muted-foreground py-6 text-center">Sin notas aún.</p>
               ) : (
                 c.notes.map((n: any) => (
                   <Card key={n.id}>
@@ -124,7 +124,7 @@ export default function ContactDetailPage() {
 
             <TabsContent value="opportunities" className="space-y-3 mt-3">
               {!c.opportunities?.length ? (
-                <p className="text-sm text-muted-foreground py-6 text-center">No opportunities linked.</p>
+                <p className="text-sm text-muted-foreground py-6 text-center">Sin oportunidades vinculadas.</p>
               ) : (
                 c.opportunities.map((o: any) => (
                   <Card key={o.id}>
@@ -147,7 +147,7 @@ export default function ContactDetailPage() {
 
             <TabsContent value="activity" className="mt-3">
               {!c.activities?.length ? (
-                <p className="text-sm text-muted-foreground py-6 text-center">No activity recorded.</p>
+                <p className="text-sm text-muted-foreground py-6 text-center">Sin actividad registrada.</p>
               ) : (
                 <div className="space-y-2">
                   {c.activities.map((a: any) => (

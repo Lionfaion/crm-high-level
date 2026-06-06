@@ -9,12 +9,12 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: { default: "CRM High Level", template: "%s | CRM High Level" },
-  description: "GoHighLevel CRM Clone",
+  description: "Clon de CRM GoHighLevel",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <AuthSessionProvider>{children}</AuthSessionProvider>
       </body>

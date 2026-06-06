@@ -78,12 +78,12 @@ export function ReputationClient() {
     setSaving(true);
     try {
       await api.post(`/v1/reputation/reviews/${respondTo.id}/respond`, { response });
-      toast.success("Response submitted");
+      toast.success("Respuesta enviada");
       setRespondTo(null);
       setResponse("");
       mutate();
     } catch {
-      toast.error("Failed to submit response");
+      toast.error("Error al enviar la respuesta");
     } finally {
       setSaving(false);
     }
@@ -92,33 +92,33 @@ export function ReputationClient() {
   async function hideReview(id: string) {
     try {
       await api.post(`/v1/reputation/reviews/${id}/hide`, {});
-      toast.success("Review hidden");
+      toast.success("Reseña ocultada");
       mutate();
     } catch {
-      toast.error("Failed to hide review");
+      toast.error("Error al ocultar la reseña");
     }
   }
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Reputation Management</h1>
+      <h1 className="text-2xl font-bold mb-6">Gestión de Reputación</h1>
 
       {/* Stats cards */}
       {stats && (
         <div className="grid grid-cols-3 gap-4 mb-8">
           <div className="border rounded-lg p-4">
-            <p className="text-sm text-muted-foreground">Average Rating</p>
+            <p className="text-sm text-muted-foreground">Calificación Promedio</p>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-3xl font-bold">{stats.averageRating}</span>
               <StarRating value={Math.round(stats.averageRating)} />
             </div>
           </div>
           <div className="border rounded-lg p-4">
-            <p className="text-sm text-muted-foreground">Total Reviews</p>
+            <p className="text-sm text-muted-foreground">Total de Reseñas</p>
             <p className="text-3xl font-bold mt-1">{stats.total}</p>
           </div>
           <div className="border rounded-lg p-4">
-            <p className="text-sm text-muted-foreground">5-Star Reviews</p>
+            <p className="text-sm text-muted-foreground">Reseñas de 5 Estrellas</p>
             <p className="text-3xl font-bold mt-1">{stats.byRating[5] ?? 0}</p>
           </div>
         </div>
@@ -128,19 +128,19 @@ export function ReputationClient() {
       {reviews.length === 0 ? (
         <div className="border rounded-lg p-12 text-center text-muted-foreground">
           <Star className="mx-auto h-10 w-10 mb-3 opacity-30" />
-          <p className="font-medium">No reviews yet</p>
-          <p className="text-sm">Send review requests to your contacts to start collecting feedback.</p>
+          <p className="font-medium">Sin reseñas aún</p>
+          <p className="text-sm">Enviá solicitudes de reseñas a tus contactos para comenzar a recopilar opiniones.</p>
         </div>
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Reviewer</TableHead>
-                <TableHead>Rating</TableHead>
-                <TableHead>Source</TableHead>
-                <TableHead>Review</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>Reseñador</TableHead>
+                <TableHead>Calificación</TableHead>
+                <TableHead>Fuente</TableHead>
+                <TableHead>Reseña</TableHead>
+                <TableHead>Fecha</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -148,7 +148,7 @@ export function ReputationClient() {
               {reviews.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell className="font-medium">
-                    {r.reviewerName ?? (r.contact ? `${r.contact.firstName} ${r.contact.lastName ?? ""}` : "Anonymous")}
+                    {r.reviewerName ?? (r.contact ? `${r.contact.firstName} ${r.contact.lastName ?? ""}` : "Anónimo")}
                   </TableCell>
                   <TableCell><StarRating value={r.rating} /></TableCell>
                   <TableCell>
@@ -160,7 +160,7 @@ export function ReputationClient() {
                     {r.title && <p className="font-medium text-sm">{r.title}</p>}
                     {r.body && <p className="text-sm text-muted-foreground truncate">{r.body}</p>}
                     {r.response && (
-                      <p className="text-xs text-blue-600 mt-1">✓ Responded</p>
+                      <p className="text-xs text-blue-600 mt-1">✓ Respondida</p>
                     )}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
@@ -174,7 +174,7 @@ export function ReputationClient() {
                           variant="outline"
                           onClick={() => { setRespondTo(r); setResponse(""); }}
                         >
-                          <MessageSquare className="h-3 w-3 mr-1" /> Reply
+                          <MessageSquare className="h-3 w-3 mr-1" /> Responder
                         </Button>
                       )}
                       {r.status !== "HIDDEN" && (
@@ -184,7 +184,7 @@ export function ReputationClient() {
                           className="text-destructive"
                           onClick={() => hideReview(r.id)}
                         >
-                          Hide
+                          Ocultar
                         </Button>
                       )}
                     </div>
@@ -200,7 +200,7 @@ export function ReputationClient() {
       <Dialog open={!!respondTo} onOpenChange={(o) => { if (!o) setRespondTo(null); }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Respond to Review</DialogTitle>
+            <DialogTitle>Responder a la Reseña</DialogTitle>
           </DialogHeader>
           {respondTo && (
             <div className="space-y-4 pt-2">
@@ -210,19 +210,19 @@ export function ReputationClient() {
                 {respondTo.body && <p className="text-sm text-muted-foreground">{respondTo.body}</p>}
               </div>
               <div className="grid gap-2">
-                <Label>Your Response</Label>
+                <Label>Tu respuesta</Label>
                 <Textarea
                   value={response}
                   onChange={(e) => setResponse(e.target.value)}
                   rows={4}
-                  placeholder="Thank you for your feedback…"
+                  placeholder="Gracias por tu opinión…"
                 />
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setRespondTo(null)}>Cancel</Button>
+                <Button variant="outline" onClick={() => setRespondTo(null)}>Cancelar</Button>
                 <Button onClick={submitResponse} disabled={saving || !response.trim()}>
                   <Send className="mr-1 h-3 w-3" />
-                  {saving ? "Sending…" : "Send Response"}
+                  {saving ? "Enviando…" : "Enviar Respuesta"}
                 </Button>
               </div>
             </div>

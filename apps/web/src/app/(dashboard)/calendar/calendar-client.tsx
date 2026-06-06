@@ -242,16 +242,16 @@ export function CalendarClient() {
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label>Title</Label>
+              <Label>Título</Label>
               <Input
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="Appointment title"
+                placeholder="Título del turno"
               />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="grid gap-2">
-                <Label>Start</Label>
+                <Label>Inicio</Label>
                 <Input
                   type="datetime-local"
                   value={form.startAt}
@@ -259,7 +259,7 @@ export function CalendarClient() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label>End</Label>
+                <Label>Fin</Label>
                 <Input
                   type="datetime-local"
                   value={form.endAt}
@@ -268,7 +268,7 @@ export function CalendarClient() {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label>Contact ID (optional)</Label>
+              <Label>ID de contacto (opcional)</Label>
               <Input
                 value={form.contactId}
                 onChange={(e) => setForm({ ...form, contactId: e.target.value })}
@@ -276,12 +276,12 @@ export function CalendarClient() {
               />
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancelar</Button>
               <Button
                 onClick={createAppointment}
                 disabled={saving || !form.appointmentTypeId || !form.title || !form.startAt || !form.endAt}
               >
-                {saving ? "Creating…" : "Create"}
+                {saving ? "Creando…" : "Crear"}
               </Button>
             </div>
           </div>

@@ -6,7 +6,7 @@ export function ComingSoon({ module }: { module: string }) {
       <Construction className="h-10 w-10 text-muted-foreground/40" />
       <div>
         <p className="font-medium text-foreground">{module}</p>
-        <p className="text-sm text-muted-foreground mt-1">This module is coming soon.</p>
+        <p className="text-sm text-muted-foreground mt-1">Este módulo estará disponible próximamente.</p>
       </div>
     </div>
   );

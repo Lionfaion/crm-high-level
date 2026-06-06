@@ -29,7 +29,7 @@ interface Course {
 }
 
 function formatCents(amount: number) {
-  return amount === 0 ? "Free" : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount / 100);
+  return amount === 0 ? "Gratis" : new Intl.NumberFormat("es-AR", { style: "currency", currency: "USD" }).format(amount / 100);
 }
 
 export function MembershipsClient() {
@@ -50,12 +50,12 @@ export function MembershipsClient() {
         ...form,
         price: Math.round(Number(form.price) * 100),
       });
-      toast.success("Course created");
+      toast.success("Curso creado");
       setOpen(false);
       setForm({ title: "", slug: "", description: "", price: "0" });
       mutate();
     } catch {
-      toast.error("Failed to create course");
+      toast.error("Error al crear el curso");
     } finally {
       setSaving(false);
     }
@@ -64,10 +64,10 @@ export function MembershipsClient() {
   async function togglePublish(course: Course) {
     try {
       await api.patch(`/v1/memberships/courses/${course.id}`, { isPublished: !course.isPublished });
-      toast.success(course.isPublished ? "Course unpublished" : "Course published");
+      toast.success(course.isPublished ? "Curso despublicado" : "Curso publicado");
       mutate();
     } catch {
-      toast.error("Failed to update course");
+      toast.error("Error al actualizar el curso");
     }
   }
 
@@ -75,35 +75,35 @@ export function MembershipsClient() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Memberships & Courses</h1>
-          <p className="text-muted-foreground">{courses.length} courses</p>
+          <h1 className="text-2xl font-bold">Membresías y Cursos</h1>
+          <p className="text-muted-foreground">{courses.length} cursos</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" />New Course</Button>
+            <Button><Plus className="mr-2 h-4 w-4" />Nuevo Curso</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Create Course</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>Crear Curso</DialogTitle></DialogHeader>
             <div className="space-y-4 pt-2">
               <div className="grid gap-2">
-                <Label>Title</Label>
-                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Sales Mastery 101" />
+                <Label>Título</Label>
+                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="ej. Dominio de Ventas 101" />
               </div>
               <div className="grid gap-2">
                 <Label>Slug</Label>
-                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="sales-mastery-101" />
+                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })} placeholder="dominio-ventas-101" />
               </div>
               <div className="grid gap-2">
-                <Label>Description</Label>
+                <Label>Descripción</Label>
                 <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
               </div>
               <div className="grid gap-2">
-                <Label>Price ($)</Label>
+                <Label>Precio ($)</Label>
                 <Input type="number" min="0" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                <Button onClick={create} disabled={saving || !form.title || !form.slug}>{saving ? "Creating…" : "Create"}</Button>
+                <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+                <Button onClick={create} disabled={saving || !form.title || !form.slug}>{saving ? "Creando…" : "Crear"}</Button>
               </div>
             </div>
           </DialogContent>
@@ -113,20 +113,20 @@ export function MembershipsClient() {
       {courses.length === 0 ? (
         <div className="border rounded-lg p-12 text-center text-muted-foreground">
           <GraduationCap className="mx-auto h-10 w-10 mb-3 opacity-30" />
-          <p className="font-medium">No courses yet</p>
-          <p className="text-sm">Create online courses and manage member enrollments.</p>
+          <p className="font-medium">Sin cursos aún</p>
+          <p className="text-sm">Creá cursos en línea y gestioná las inscripciones.</p>
         </div>
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Sections</TableHead>
-                <TableHead>Enrolled</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>Título</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead>Precio</TableHead>
+                <TableHead>Secciones</TableHead>
+                <TableHead>Inscriptos</TableHead>
+                <TableHead>Creado</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -139,7 +139,7 @@ export function MembershipsClient() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={c.isPublished ? "default" : "secondary"}>
-                      {c.isPublished ? "Published" : "Draft"}
+                      {c.isPublished ? "Publicado" : "Borrador"}
                     </Badge>
                   </TableCell>
                   <TableCell>{formatCents(c.price)}</TableCell>
@@ -151,7 +151,7 @@ export function MembershipsClient() {
                   <TableCell>
                     <div className="flex gap-1">
                       <Button size="sm" variant="outline" onClick={() => togglePublish(c)}>
-                        {c.isPublished ? "Unpublish" : "Publish"}
+                        {c.isPublished ? "Despublicar" : "Publicar"}
                       </Button>
                     </div>
                   </TableCell>

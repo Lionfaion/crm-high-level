@@ -9,92 +9,92 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export const metadata: Metadata = { title: "Dashboard" };
+export const metadata: Metadata = { title: "Panel" };
 
 const stats = [
-  { label: "Total Contacts",     icon: Users,       value: "—", badge: null },
-  { label: "Open Opportunities", icon: Target,      value: "—", badge: null },
-  { label: "Active Pipelines",   icon: GitBranch,   value: "—", badge: null },
-  { label: "Won This Month",     icon: TrendingUp,  value: "—", badge: null },
+  { label: "Total de Contactos",    icon: Users,       value: "—", badge: null },
+  { label: "Oportunidades Abiertas", icon: Target,      value: "—", badge: null },
+  { label: "Embudos Activos",        icon: GitBranch,   value: "—", badge: null },
+  { label: "Ganados este Mes",       icon: TrendingUp,  value: "—", badge: null },
 ];
 
 const modules = [
   {
     href: "/contacts",
-    label: "Contacts",
-    description: "Manage leads and customers",
+    label: "Contactos",
+    description: "Gestioná leads y clientes",
     icon: Users,
     color: "text-blue-500",
     bg: "bg-blue-500/10",
   },
   {
     href: "/pipelines",
-    label: "Pipelines",
-    description: "Track deals through stages",
+    label: "Embudos de venta",
+    description: "Seguí los negocios por etapas",
     icon: GitBranch,
     color: "text-purple-500",
     bg: "bg-purple-500/10",
   },
   {
     href: "/messaging/inbox",
-    label: "Conversations",
-    description: "Email, SMS and voicemail",
+    label: "Conversaciones",
+    description: "Correo, SMS y correo de voz",
     icon: MessageSquare,
     color: "text-green-500",
     bg: "bg-green-500/10",
   },
   {
     href: "/calendar",
-    label: "Calendar",
-    description: "Schedule appointments",
+    label: "Calendario",
+    description: "Agendá turnos y citas",
     icon: Calendar,
     color: "text-orange-500",
     bg: "bg-orange-500/10",
   },
   {
     href: "/funnels",
-    label: "Funnels",
-    description: "Build landing pages and funnels",
+    label: "Embudos",
+    description: "Construí páginas de aterrizaje y embudos",
     icon: Filter,
     color: "text-pink-500",
     bg: "bg-pink-500/10",
   },
   {
     href: "/reputation",
-    label: "Reputation",
-    description: "Manage reviews and ratings",
+    label: "Reputación",
+    description: "Gestioná reseñas y calificaciones",
     icon: Star,
     color: "text-yellow-500",
     bg: "bg-yellow-500/10",
   },
   {
     href: "/campaigns",
-    label: "Campaigns",
-    description: "Run marketing campaigns",
+    label: "Campañas",
+    description: "Ejecutá campañas de marketing",
     icon: Megaphone,
     color: "text-red-500",
     bg: "bg-red-500/10",
   },
   {
     href: "/memberships",
-    label: "Memberships",
-    description: "Courses and membership sites",
+    label: "Membresías",
+    description: "Cursos y sitios de membresía",
     icon: GraduationCap,
     color: "text-indigo-500",
     bg: "bg-indigo-500/10",
   },
   {
     href: "/payments",
-    label: "Payments",
-    description: "Invoices and transactions",
+    label: "Pagos",
+    description: "Facturas y transacciones",
     icon: CreditCard,
     color: "text-emerald-500",
     bg: "bg-emerald-500/10",
   },
   {
     href: "/reporting",
-    label: "Reporting",
-    description: "Analytics and insights",
+    label: "Reportes",
+    description: "Analíticas e informes",
     icon: BarChart3,
     color: "text-cyan-500",
     bg: "bg-cyan-500/10",
@@ -123,7 +123,7 @@ export default function DashboardPage() {
       {/* Module grid */}
       <div>
         <h2 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wide">
-          All Modules
+          Todos los módulos
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {modules.map(({ href, label, description, icon: Icon, color, bg }) => (

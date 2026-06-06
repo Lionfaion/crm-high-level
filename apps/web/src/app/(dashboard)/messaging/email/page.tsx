@@ -1,4 +1,4 @@
 import type { Metadata } from "next";
 import { ComingSoon } from "@/components/ui/coming-soon";
-export const metadata: Metadata = { title: "Email" };
-export default function EmailPage() { return <ComingSoon module="Email" />; }
+export const metadata: Metadata = { title: "Correo electrónico" };
+export default function EmailPage() { return <ComingSoon module="Correo electrónico" />; }

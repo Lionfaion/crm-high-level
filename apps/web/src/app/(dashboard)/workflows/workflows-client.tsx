@@ -58,12 +58,12 @@ export function WorkflowsClient() {
     setSaving(true);
     try {
       await api.post("/v1/workflows", form);
-      toast.success("Workflow created");
+      toast.success("Automatización creada");
       setOpen(false);
       setForm({ name: "", triggerType: "CONTACT_CREATED" });
       mutate();
     } catch {
-      toast.error("Failed to create workflow");
+      toast.error("Error al crear la automatización");
     } finally {
       setSaving(false);
     }
@@ -73,10 +73,10 @@ export function WorkflowsClient() {
     const newStatus = wf.status === "ACTIVE" ? "PAUSED" : "ACTIVE";
     try {
       await api.patch(`/v1/workflows/${wf.id}`, { status: newStatus });
-      toast.success(`Workflow ${newStatus === "ACTIVE" ? "activated" : "paused"}`);
+      toast.success(`Automatización ${newStatus === "ACTIVE" ? "activada" : "pausada"}`);
       mutate();
     } catch {
-      toast.error("Failed to update workflow");
+      toast.error("Error al actualizar la automatización");
     }
   }
 
@@ -84,28 +84,28 @@ export function WorkflowsClient() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Workflows</h1>
-          <p className="text-muted-foreground">{data?.total ?? 0} automation workflows</p>
+          <h1 className="text-2xl font-bold">Automatizaciones</h1>
+          <p className="text-muted-foreground">{data?.total ?? 0} automatizaciones</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" />New Workflow</Button>
+            <Button><Plus className="mr-2 h-4 w-4" />Nueva Automatización</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create Workflow</DialogTitle>
+              <DialogTitle>Crear Automatización</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
               <div className="grid gap-2">
-                <Label>Name</Label>
+                <Label>Nombre</Label>
                 <Input
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="e.g. Welcome new contact"
+                  placeholder="ej. Bienvenida a nuevo contacto"
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Trigger</Label>
+                <Label>Disparador</Label>
                 <Select
                   value={form.triggerType}
                   onValueChange={(v) => setForm({ ...form, triggerType: v })}
@@ -121,9 +121,9 @@ export function WorkflowsClient() {
                 </Select>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
                 <Button onClick={createWorkflow} disabled={saving || !form.name}>
-                  {saving ? "Creating…" : "Create"}
+                  {saving ? "Creando…" : "Crear"}
                 </Button>
               </div>
             </div>
@@ -134,20 +134,20 @@ export function WorkflowsClient() {
       {workflows.length === 0 ? (
         <div className="border rounded-lg p-12 text-center text-muted-foreground">
           <Zap className="mx-auto h-10 w-10 mb-3 opacity-30" />
-          <p className="font-medium">No workflows yet</p>
-          <p className="text-sm">Automate your CRM with trigger-based workflows.</p>
+          <p className="font-medium">Sin automatizaciones aún</p>
+          <p className="text-sm">Automatizá tu CRM con flujos basados en disparadores.</p>
         </div>
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Trigger</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Steps</TableHead>
-                <TableHead>Runs</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Disparador</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead>Pasos</TableHead>
+                <TableHead>Ejecuciones</TableHead>
+                <TableHead>Creada</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -182,9 +182,9 @@ export function WorkflowsClient() {
                         onClick={() => toggleStatus(wf)}
                       >
                         {wf.status === "ACTIVE" ? (
-                          <><Pause className="mr-1 h-3 w-3" />Pause</>
+                          <><Pause className="mr-1 h-3 w-3" />Pausar</>
                         ) : (
-                          <><Play className="mr-1 h-3 w-3" />Activate</>
+                          <><Play className="mr-1 h-3 w-3" />Activar</>
                         )}
                       </Button>
                     )}
