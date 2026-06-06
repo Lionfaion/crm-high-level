@@ -66,10 +66,14 @@ const port = Number(process.env.PORT ?? process.env.API_PORT ?? 3001);
 
 async function start() {
   try {
-    execSync("npx prisma migrate deploy --schema=packages/db/prisma/schema.prisma", {
-      stdio: "inherit",
-      cwd: process.cwd(),
-    });
+    try {
+      execSync("npx prisma migrate deploy --schema=packages/db/prisma/schema.prisma", {
+        stdio: "inherit",
+        cwd: process.cwd(),
+      });
+    } catch (migrateErr) {
+      app.log.warn({ err: migrateErr }, "prisma migrate deploy failed — continuing anyway");
+    }
     await app.listen({ port, host: "0.0.0.0" });
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") ?? ["http://localhost:3000"];
     initSocketIO(app.server, allowedOrigins);
