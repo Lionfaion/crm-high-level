@@ -1,3 +1,4 @@
+import { execSync } from "child_process";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import helmetPlugin from "./plugins/helmet.js";
@@ -65,6 +66,10 @@ const port = Number(process.env.PORT ?? process.env.API_PORT ?? 3001);
 
 async function start() {
   try {
+    execSync("npx prisma migrate deploy --schema=packages/db/prisma/schema.prisma", {
+      stdio: "inherit",
+      cwd: process.cwd(),
+    });
     await app.listen({ port, host: "0.0.0.0" });
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") ?? ["http://localhost:3000"];
     initSocketIO(app.server, allowedOrigins);
