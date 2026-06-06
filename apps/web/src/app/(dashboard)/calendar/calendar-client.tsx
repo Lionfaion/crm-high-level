@@ -83,12 +83,12 @@ export function CalendarClient() {
         ...form,
         contactId: form.contactId || undefined,
       });
-      toast.success("Appointment created");
+      toast.success("Turno creado");
       setCreateOpen(false);
       setForm({ appointmentTypeId: "", title: "", startAt: "", endAt: "", contactId: "" });
       mutate();
     } catch {
-      toast.error("Failed to create appointment");
+      toast.error("Error al crear el turno");
     } finally {
       setSaving(false);
     }
@@ -97,10 +97,10 @@ export function CalendarClient() {
   async function cancelAppt(id: string) {
     try {
       await api.post(`/v1/calendar/${id}/cancel`, {});
-      toast.success("Appointment cancelled");
+      toast.success("Turno cancelado");
       mutate();
     } catch {
-      toast.error("Failed to cancel");
+      toast.error("Error al cancelar");
     }
   }
 
@@ -123,12 +123,12 @@ export function CalendarClient() {
             </Button>
           </div>
           <Button onClick={() => setCreateOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> New Appointment
+            <Plus className="mr-2 h-4 w-4" /> Nuevo Turno
           </Button>
         </div>
 
         <div className="grid grid-cols-7 gap-px bg-border rounded-lg overflow-hidden border">
-          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+          {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].map((d) => (
             <div key={d} className="bg-muted/50 text-center text-xs font-medium py-2 text-muted-foreground">
               {d}
             </div>
@@ -165,7 +165,7 @@ export function CalendarClient() {
                     </div>
                   ))}
                   {appts.length > 2 && (
-                    <div className="text-xs text-muted-foreground">+{appts.length - 2} more</div>
+                    <div className="text-xs text-muted-foreground">+{appts.length - 2} más</div>
                   )}
                 </div>
               </button>
@@ -182,7 +182,7 @@ export function CalendarClient() {
             {selectedAppts.length === 0 ? (
               <div className="text-sm text-muted-foreground text-center py-6">
                 <CalIcon className="mx-auto h-6 w-6 mb-2 opacity-30" />
-                No appointments
+                Sin turnos
               </div>
             ) : (
               <div className="space-y-2">
@@ -211,7 +211,7 @@ export function CalendarClient() {
                         className="mt-1 text-destructive hover:text-destructive text-xs h-6 px-2"
                         onClick={() => cancelAppt(a.id)}
                       >
-                        Cancel
+                        Cancelar
                       </Button>
                     ) : null}
                   </div>
@@ -225,15 +225,15 @@ export function CalendarClient() {
       {/* Create dialog */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>New Appointment</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Nuevo Turno</DialogTitle></DialogHeader>
           <div className="space-y-4 pt-2">
             <div className="grid gap-2">
-              <Label>Type</Label>
+              <Label>Tipo</Label>
               <Select
                 value={form.appointmentTypeId}
                 onValueChange={(v) => setForm({ ...form, appointmentTypeId: v })}
               >
-                <SelectTrigger><SelectValue placeholder="Select type…" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Seleccionar tipo…" /></SelectTrigger>
                 <SelectContent>
                   {types.map((t) => (
                     <SelectItem key={t.id} value={t.id}>{t.name} ({t.duration} min)</SelectItem>
